@@ -1,0 +1,8 @@
+{
+  "id": "sample_conversation_001",
+  "title": "Sample archive normalization fixture",
+  "mapping": {
+    "node_001": { "message": { "id": "message_001", "author": { "role": "user" }, "content": { "parts": ["We should preserve evidence before interpretation."] } } },
+    "node_002": { "message": { "id": "message_002", "author": { "role": "assistant" }, "content": { "parts": ["Agreed. The archive layer should normalize without making causal claims."] } } }
+  }
+}

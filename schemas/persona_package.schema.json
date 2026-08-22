@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/persona_package.schema.json",
+  "title": "Persona Package",
+  "type": "object",
+  "required": ["manifest", "experiences", "provenance", "validation", "evolution"],
+  "properties": {
+    "manifest": { "type": "object" },
+    "identity": { "type": "object" },
+    "experiences": { "type": "array", "items": { "type": "object" } },
+    "causal_graph": { "type": "object" },
+    "relationship": { "type": "object" },
+    "behavior": { "type": "object" },
+    "provenance": { "type": "object" },
+    "validation": { "type": "object" },
+    "evolution": { "type": "object" }
+  },
+  "additionalProperties": false
+}

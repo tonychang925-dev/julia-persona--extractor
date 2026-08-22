@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/causal_experience.schema.json",
+  "title": "Causal Experience Node",
+  "type": "object",
+  "required": ["experience_id", "provenance", "trigger", "response", "transition", "relationship_delta", "behavioral_consequence", "activation_conditions", "causal_density", "lifecycle_status"],
+  "properties": {
+    "experience_id": { "type": "string" },
+    "provenance": { "type": "array", "items": { "type": "object" }, "minItems": 1 },
+    "trigger": { "type": "string" },
+    "response": { "type": "string" },
+    "transition": { "type": "string" },
+    "relationship_delta": { "type": "string" },
+    "behavioral_consequence": { "type": "string" },
+    "activation_conditions": { "type": "array", "items": { "type": "string" } },
+    "causal_density": { "type": "object" },
+    "lifecycle_status": { "type": "string", "enum": ["extracted", "validated", "active", "challenged", "deprecated"] }
+  },
+  "additionalProperties": false
+}
