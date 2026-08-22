@@ -1,0 +1,6 @@
+{
+  "package_id": "sample_persona_package_001",
+  "schema_version": "0.1.0",
+  "created_at": "2026-08-23T00:00:00Z",
+  "generator": "julia-persona-extractor/0.1.0"
+}
