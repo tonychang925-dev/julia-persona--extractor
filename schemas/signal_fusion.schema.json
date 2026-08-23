@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/signal_fusion.schema.json",
+  "title": "Signal Fusion Record",
+  "type": "object",
+  "required": ["schema_version", "fusion_id", "candidate_id", "signals", "fusion_method", "confidence", "provenance_refs", "created_by"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.2.0" },
+    "fusion_id": { "type": "string", "minLength": 1 },
+    "candidate_id": { "type": "string", "minLength": 1 },
+    "signals": { "type": "array", "items": { "$ref": "#/$defs/signal_ref" }, "minItems": 1 },
+    "fusion_method": { "type": "string", "enum": ["weighted_observable_signal_average", "max_signal_strength", "manual_fusion_review"] },
+    "confidence": {
+      "type": "object",
+      "required": ["score", "basis"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "basis": { "type": "array", "items": { "type": "string", "enum": ["signal_count", "signal_strength", "signal_consistency", "provenance_quality", "source_segment_coverage"] }, "minItems": 1 },
+        "factors": {
+          "type": "object",
+          "properties": {
+            "signal_count": { "type": "number", "minimum": 0 },
+            "mean_signal_strength": { "type": "number", "minimum": 0, "maximum": 1 },
+            "max_signal_strength": { "type": "number", "minimum": 0, "maximum": 1 },
+            "provenance_quality": { "type": "number", "minimum": 0, "maximum": 1 },
+            "source_segment_coverage": { "type": "number", "minimum": 0, "maximum": 1 }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "provenance_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "created_by": { "type": "object", "required": ["component", "version"], "properties": { "component": { "type": "string", "minLength": 1 }, "version": { "type": "string", "minLength": 1 } }, "additionalProperties": false }
+  },
+  "$defs": {
+    "signal_ref": {
+      "type": "object",
+      "required": ["signal_type", "strength", "observed_on"],
+      "properties": {
+        "signal_type": { "type": "string", "enum": ["conversation_length_change", "topic_transition", "emotional_intensity_change", "response_pattern_shift", "repeated_reference", "time_gap_proximity", "manual_review_marker"] },
+        "strength": { "type": "number", "minimum": 0, "maximum": 1 },
+        "observed_on": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["importance"] },
+      { "required": ["identity_relevance"] },
+      { "required": ["meaning"] },
+      { "required": ["impact"] },
+      { "required": ["identity_change"] },
+      { "required": ["personality"] },
+      { "required": ["causal_claim"] },
+      { "required": ["relationship_delta"] },
+      { "required": ["behavioral_consequence"] },
+      { "required": ["runtime_eligibility"] },
+      { "required": ["activation_weight"] },
+      { "required": ["governance_status"] }
+    ]
+  },
+  "additionalProperties": false
+}
