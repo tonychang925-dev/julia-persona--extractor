@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/candidate_review_record.schema.json",
+  "title": "Candidate Review Record",
+  "type": "object",
+  "required": ["schema_version", "review_id", "candidate_id", "review_state", "decision_reason", "provenance_refs", "history", "created_by"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.2.0" },
+    "review_id": { "type": "string", "minLength": 1 },
+    "candidate_id": { "type": "string", "minLength": 1 },
+    "fusion_id": { "type": ["string", "null"] },
+    "review_state": { "type": "string", "enum": ["detected", "scored", "review_pending", "accepted_for_extraction", "rejected"] },
+    "decision_reason": { "type": "string" },
+    "provenance_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "history": { "type": "array", "items": { "$ref": "#/$defs/review_transition" } },
+    "created_by": { "type": "object", "required": ["component", "version"], "properties": { "component": { "type": "string", "minLength": 1 }, "version": { "type": "string", "minLength": 1 } }, "additionalProperties": false }
+  },
+  "$defs": {
+    "review_transition": {
+      "type": "object",
+      "required": ["from", "to", "actor", "timestamp", "reason"],
+      "properties": {
+        "from": { "type": ["string", "null"] },
+        "to": { "type": "string", "enum": ["detected", "scored", "review_pending", "accepted_for_extraction", "rejected"] },
+        "actor": { "type": "string", "minLength": 1 },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string" },
+        "provenance_refs": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["identity_relevance"] },
+      { "required": ["causal_value"] },
+      { "required": ["importance"] },
+      { "required": ["meaning"] },
+      { "required": ["identity_change"] },
+      { "required": ["personality"] },
+      { "required": ["causal_claim"] },
+      { "required": ["relationship_delta"] },
+      { "required": ["behavioral_consequence"] },
+      { "required": ["runtime_eligibility"] },
+      { "required": ["activation_weight"] },
+      { "required": ["governance_status"] }
+    ]
+  },
+  "additionalProperties": false
+}
