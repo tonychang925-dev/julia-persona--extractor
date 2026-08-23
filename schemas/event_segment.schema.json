@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/event_segment.schema.json",
+  "title": "Event Segment",
+  "type": "object",
+  "required": ["schema_version", "segment_id", "archive_id", "message_refs", "start_message_id", "end_message_id", "boundary", "provenance_refs", "created_by"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.2.0" },
+    "segment_id": { "type": "string", "minLength": 1 },
+    "archive_id": { "type": "string", "minLength": 1 },
+    "message_refs": { "type": "array", "items": { "$ref": "#/$defs/message_ref" }, "minItems": 1 },
+    "start_message_id": { "type": "string", "minLength": 1 },
+    "end_message_id": { "type": "string", "minLength": 1 },
+    "boundary": {
+      "type": "object",
+      "required": ["strategy", "reason_codes", "deterministic"],
+      "properties": {
+        "strategy": { "type": "string", "enum": ["turn_window", "semantic_boundary", "topic_transition", "longitudinal_experience"] },
+        "reason_codes": { "type": "array", "items": { "type": "string", "enum": ["fixed_turn_window", "time_gap", "topic_shift", "participant_shift", "context_discontinuity", "source_boundary", "manual_boundary"] }, "minItems": 1 },
+        "deterministic": { "type": "boolean" },
+        "parameters": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "provenance_refs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+    "created_by": {
+      "type": "object",
+      "required": ["component", "version"],
+      "properties": {
+        "component": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "message_ref": {
+      "type": "object",
+      "required": ["archive_id", "message_id", "provenance_ref"],
+      "properties": {
+        "archive_id": { "type": "string", "minLength": 1 },
+        "message_id": { "type": "string", "minLength": 1 },
+        "provenance_ref": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["meaning"] },
+      { "required": ["impact"] },
+      { "required": ["identity_change"] },
+      { "required": ["personality"] },
+      { "required": ["runtime_eligibility"] },
+      { "required": ["activation_weight"] },
+      { "required": ["governance_status"] }
+    ]
+  },
+  "additionalProperties": false
+}
