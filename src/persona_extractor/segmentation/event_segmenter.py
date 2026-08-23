@@ -1,9 +1,11 @@
-"""Event segmentation prototype."""
+"""Backward-compatible event segmentation entry points."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
+
+from persona_extractor.segmentation.turn_window_segmenter import TurnWindowSegmenter
 
 
 @dataclass(frozen=True)
@@ -14,8 +16,19 @@ class EventSegment:
     evidence: dict[str, Any]
 
 
+def segment_archive_by_turn_window(
+    archive: dict[str, Any],
+    window_size: int = 8,
+) -> list[dict[str, Any]]:
+    """Return Event Segment schema-compatible dictionaries."""
+    return TurnWindowSegmenter(window_size=window_size).segment(archive)
+
+
 def segment_by_turn_window(messages: list[dict[str, Any]], window_size: int = 8) -> list[EventSegment]:
-    """Create deterministic prototype segments by fixed message windows."""
+    """Legacy prototype API retained for early tests.
+
+    Prefer `TurnWindowSegmenter.segment(archive)` for M1 schema-compatible output.
+    """
     segments: list[EventSegment] = []
     for index in range(0, len(messages), window_size):
         chunk = messages[index : index + window_size]
