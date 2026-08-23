@@ -3,17 +3,116 @@
   "$id": "https://julia-persona.org/schemas/persona_package.schema.json",
   "title": "Persona Package",
   "type": "object",
-  "required": ["manifest", "experiences", "provenance", "validation", "evolution"],
+  "required": ["manifest", "experiences", "causal_graph", "provenance", "validation", "lifecycle"],
   "properties": {
-    "manifest": { "type": "object" },
-    "identity": { "type": "object" },
-    "experiences": { "type": "array", "items": { "type": "object" } },
-    "causal_graph": { "type": "object" },
-    "relationship": { "type": "object" },
-    "behavior": { "type": "object" },
-    "provenance": { "type": "object" },
-    "validation": { "type": "object" },
-    "evolution": { "type": "object" }
+    "manifest": {
+      "type": "object",
+      "required": ["package_id", "schema_version", "created_at", "generator"],
+      "properties": {
+        "package_id": { "type": "string", "minLength": 1 },
+        "schema_version": { "type": "string", "const": "0.2.0" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "generator": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "experiences": { "type": "array", "items": { "$ref": "#/$defs/experience_ref" } },
+    "causal_graph": {
+      "type": "object",
+      "required": ["nodes", "edges"],
+      "properties": {
+        "nodes": { "type": "array", "items": { "$ref": "#/$defs/graph_node" } },
+        "edges": { "type": "array", "items": { "$ref": "#/$defs/graph_edge" } }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["archive_refs", "experience_refs", "lineage_complete"],
+      "properties": {
+        "archive_refs": { "type": "array", "items": { "type": "string" } },
+        "experience_refs": { "type": "array", "items": { "type": "string" } },
+        "lineage_complete": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "object",
+      "required": ["extractor_status", "review_status"],
+      "properties": {
+        "extractor_status": { "type": "string", "enum": ["created", "extracted", "review_pending"] },
+        "review_status": { "type": "string", "enum": ["not_started", "pending", "validated", "challenged", "deprecated"] }
+      },
+      "additionalProperties": false
+    },
+    "lifecycle": { "$ref": "#/$defs/lifecycle" }
+  },
+  "$defs": {
+    "experience_ref": {
+      "type": "object",
+      "required": ["experience_id", "provenance_refs"],
+      "properties": {
+        "experience_id": { "type": "string", "minLength": 1 },
+        "provenance_refs": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      },
+      "additionalProperties": false
+    },
+    "graph_node": {
+      "type": "object",
+      "required": ["node_id", "node_type", "derived_from", "provenance_refs"],
+      "properties": {
+        "node_id": { "type": "string", "minLength": 1 },
+        "node_type": { "type": "string", "minLength": 1 },
+        "derived_from": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "provenance_refs": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      },
+      "additionalProperties": false
+    },
+    "graph_edge": {
+      "type": "object",
+      "required": ["edge_id", "from_node", "to_node", "relation", "derived_from", "provenance_refs"],
+      "properties": {
+        "edge_id": { "type": "string", "minLength": 1 },
+        "from_node": { "type": "string", "minLength": 1 },
+        "to_node": { "type": "string", "minLength": 1 },
+        "relation": { "type": "string", "minLength": 1 },
+        "derived_from": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "provenance_refs": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      },
+      "additionalProperties": false
+    },
+    "lifecycle": {
+      "type": "object",
+      "required": ["current_state", "history"],
+      "properties": {
+        "current_state": { "type": "string", "enum": ["created", "extracted", "review_pending", "validated", "installed", "active", "challenged", "deprecated"] },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to", "actor", "timestamp", "reason"],
+            "properties": {
+              "from": { "type": ["string", "null"] },
+              "to": { "type": "string" },
+              "actor": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "reason": { "type": "string" },
+              "evidence_refs": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["runtime_eligibility"] },
+      { "required": ["activation_weight"] },
+      { "required": ["governance_status"] },
+      { "required": ["runtime_scope"] }
+    ]
   },
   "additionalProperties": false
 }
