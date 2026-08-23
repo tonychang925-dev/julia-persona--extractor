@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import pytest
-
 from persona_extractor.review.review_queue import CandidateReviewQueue
 from tests.test_candidate_review_queue import make_candidate, make_fusion
 
@@ -24,8 +22,11 @@ FORBIDDEN_FIELDS = {
 def test_review_queue_rejects_invalid_transition():
     queue = CandidateReviewQueue()
     record = queue.create_record(make_candidate(), make_fusion())
-    with pytest.raises(ValueError):
+    try:
         queue.transition(record, "accepted_for_extraction", "invalid direct accept")
+    except ValueError:
+        return
+    raise AssertionError("invalid transition was accepted")
 
 
 def test_review_queue_preserves_candidate_fusion_and_provenance():
