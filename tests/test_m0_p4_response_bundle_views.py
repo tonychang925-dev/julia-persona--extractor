@@ -79,11 +79,13 @@ def _canonical(node_refs: list[str], evidence_archive_id: str = SEA_ID) -> dict:
     }
 
 
-def _art(artifact_id_value: str, source_node_ref: str, evidence_archive_id: str = SEA_ID) -> dict:
+def _art(artifact_id_value: str, source_node_ref: str, evidence_archive_id: str = SEA_ID, pointer: str = "/message/content") -> dict:
     return {
         "artifact_id": artifact_id_value,
         "evidence_archive_id": evidence_archive_id,
         "source_node_ref": source_node_ref,
+        "artifact_profile": "chatgpt-official-export-typed-artifact-v0.1",
+        "source_artifact_pointer": pointer,
     }
 
 
@@ -325,13 +327,16 @@ def test_s26_member_without_artifact_has_no_artifact_ref():
     assert bundles[0]["artifact_refs"] == []
 
 
-def test_s27_artifact_refs_preserve_source_order_not_artifact_id_sort():
-    # within-node artifacts arrive in source order; artifact_ids are deliberately
-    # non-monotonic so a lexical sort would flip them.
+def test_s27_artifact_refs_use_pointer_numeric_order_not_caller_order():
+    # caller delivers parts/10 before parts/2; production must order by pointer
+    # numeric index (parts/2 before parts/10), not by caller list order.
     sea = _sea([_node("x1", "assistant", "multimodal_text")])
-    arts = [_art("artifact_" + "b" * 64, "x1"), _art("artifact_" + "a" * 64, "x1")]
+    arts = [
+        _art("artifact_" + "b" * 64, "x1", pointer="/message/content/parts/10"),
+        _art("artifact_" + "a" * 64, "x1", pointer="/message/content/parts/2"),
+    ]
     bundles = build_chatgpt_response_bundles(sea, _canonical(["x1"]), arts)
-    assert bundles[0]["artifact_refs"] == ["artifact_" + "b" * 64, "artifact_" + "a" * 64]
+    assert bundles[0]["artifact_refs"] == ["artifact_" + "a" * 64, "artifact_" + "b" * 64]
 
 
 # --------------------------------------------------------------------------- #
@@ -500,6 +505,57 @@ def test_s45_bundle_id_is_frozen_domain_derivation():
 
 
 # --------------------------------------------------------------------------- #
+# S46-S49 — R1 escape-hatch closure
+# --------------------------------------------------------------------------- #
+
+def test_s46_malformed_non_null_message_is_boundary_not_transparent():
+    # assistant A -> malformed non-null message -> assistant B: the malformed
+    # node breaks the run (A and B are two bundles). It is NOT skipped like null.
+    sea = _sea([
+        _node("a1", "assistant", "text"),
+        {"source_node_id": "broken", "node_evidence_id": _evid("broken"), "source_payload": {"message": "broken"}},
+        _node("a2", "assistant", "text"),
+    ])
+    bundles = build_chatgpt_response_bundles(sea, _canonical(["a1", "broken", "a2"]), [])
+    assert len(bundles) == 2
+    assert bundles[0]["member_node_refs"] == ["a1"]
+    assert bundles[1]["member_node_refs"] == ["a2"]
+
+
+def test_s47_artifact_profile_mismatch_fails_closed():
+    sea = _sea([_node("x1", "assistant", "text")])
+    art = _art(_aid("x1"), "x1")
+    art["artifact_profile"] = "some-other-profile"
+    with pytest.raises(BundleInputError):
+        build_chatgpt_response_bundles(sea, _canonical(["x1"]), [art])
+
+
+def test_s48_artifact_source_ref_not_in_sea_fails_closed():
+    sea = _sea([_node("x1", "assistant", "text")])
+    art = _art(_aid("ghost"), "ghost")
+    with pytest.raises(BundleInputError):
+        build_chatgpt_response_bundles(sea, _canonical(["x1"]), [art])
+
+
+def test_s49_shuffled_typed_artifacts_produce_identical_bundles():
+    sea = _sea([_node("x1", "assistant", "multimodal_text")])
+    arts = [
+        _art("artifact_" + "c" * 64, "x1", pointer="/message/content/parts/0"),
+        _art("artifact_" + "a" * 64, "x1", pointer="/message/content/parts/10"),
+        _art("artifact_" + "b" * 64, "x1", pointer="/message/content/parts/2"),
+    ]
+    shuffled = [arts[1], arts[2], arts[0]]
+    b1 = build_chatgpt_response_bundles(sea, _canonical(["x1"]), arts)
+    b2 = build_chatgpt_response_bundles(sea, _canonical(["x1"]), shuffled)
+    assert b1 == b2
+    assert b1[0]["artifact_refs"] == [
+        "artifact_" + "c" * 64,  # parts/0
+        "artifact_" + "b" * 64,  # parts/2
+        "artifact_" + "a" * 64,  # parts/10
+    ]
+
+
+# --------------------------------------------------------------------------- #
 # Golden private acceptance (only when GOLDEN_MIRA_FIXTURE_PATH is set)
 # --------------------------------------------------------------------------- #
 
@@ -514,10 +570,26 @@ def test_golden_private_acceptance_conservation_and_signature():
     assert canonical["resolution_status"] == "resolved"
 
     artifacts = build_chatgpt_typed_artifacts(sea)
+    sea_before = copy.deepcopy(sea)
+    canonical_before = copy.deepcopy(canonical)
+    artifacts_before = copy.deepcopy(artifacts)
+
     bundles = build_chatgpt_response_bundles(sea, canonical, artifacts)
 
+    # Frozen Golden signature (exact P4 counts).
+    resolved = [b for b in bundles if b["bundle_state"] == "resolved"]
+    ambiguous = [b for b in bundles if b["bundle_state"] == "ambiguous"]
+    assert len(bundles) == 1508
+    assert len(resolved) == 1461
+    assert len(ambiguous) == 47
+    assert sum(len(b["member_node_refs"]) for b in bundles) == 2504
+    assert sum(len(b["trigger_refs"]) for b in bundles) == 1520
+    assert sum(len(b["visible_response_refs"]) for b in bundles) == 1506
+    assert sum(len(b["provenance_refs"]) for b in bundles) == 4024
+    assert all(b["bundle_state"] != "unbundled" for b in bundles)
+
     # Conservation: every eligible canonical assistant message-bearing node is
-    # covered by exactly one bundle, and no bundle emits unbundled.
+    # covered by exactly one bundle.
     nodes_by_id = {n["source_node_id"]: n for n in sea["nodes"]}
     assistant_refs = []
     for ref in canonical["node_refs"]:
@@ -527,19 +599,26 @@ def test_golden_private_acceptance_conservation_and_signature():
         role = (message.get("author") or {}).get("role")
         if role == "assistant":
             assistant_refs.append(ref)
-
     covered = [m for b in bundles for m in b["member_node_refs"]]
     assert covered == assistant_refs
     assert len(covered) == len(set(covered)) == len(assistant_refs)
-    assert all(b["bundle_state"] != "unbundled" for b in bundles)
 
+    # Schema + reference namespace integrity.
+    artifacts_by_id = {a["artifact_id"]: a for a in artifacts}
+    bundle_ids = [b["bundle_id"] for b in bundles]
+    assert len(bundle_ids) == len(set(bundle_ids))
     for b in bundles:
         _validate(b)
+        member_set = set(b["member_node_refs"])
+        for aid in b["artifact_refs"]:
+            assert aid in artifacts_by_id
+            assert artifacts_by_id[aid]["source_node_ref"] in member_set
+        assert b["bundle_id"] == bundle_id(
+            sea["evidence_archive_id"], RESPONSE_BUNDLE_PROFILE, b["bundle_state"], b["member_node_refs"]
+        )
+    for b in resolved:
+        assert b["visible_response_refs"] == [b["member_node_refs"][-1]]
 
-    resolved = [b for b in bundles if b["bundle_state"] == "resolved"]
-    ambiguous = [b for b in bundles if b["bundle_state"] == "ambiguous"]
-    # Producer signature: exact A/R/X/Y counts are audited against the frozen
-    # Golden identity, not pre-invented here. Only the partition invariant is
-    # asserted.
-    assert len(bundles) == len(resolved) + len(ambiguous)
-    assert len(bundles) > 0
+    # Immutability + determinism on the real Golden inputs.
+    assert (sea, canonical, artifacts) == (sea_before, canonical_before, artifacts_before)
+    assert build_chatgpt_response_bundles(sea, canonical, artifacts) == bundles

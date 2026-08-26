@@ -13,11 +13,15 @@ v0.1 never emits ``unbundled``: an unresolved assistant run MUST be ``ambiguous`
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from .ids import bundle_id
+from .typed_artifacts import ARTIFACT_PROFILE as TYPED_ARTIFACT_PROFILE
 
 RESPONSE_BUNDLE_PROFILE = "chatgpt-official-export-response-bundle-v0.1"
+
+_PARTS_POINTER_RE = re.compile(r"^/message/content/parts/(\d+)$")
 
 # Frozen classification table (contract §14.3). ``multimodal_text`` is a
 # recognized terminal visible response content type (the container itself is not
@@ -47,7 +51,7 @@ def build_chatgpt_response_bundles(
     """
     evidence_archive_id, nodes_by_id = _validate_sea(sea)
     node_refs = _validate_canonical(canonical_lineage, evidence_archive_id, nodes_by_id)
-    artifacts_by_node = _validate_artifacts(typed_artifacts, evidence_archive_id)
+    artifacts_by_node = _validate_artifacts(typed_artifacts, evidence_archive_id, nodes_by_id)
 
     seq = _message_bearing_sequence(node_refs, nodes_by_id)
     return _group_bundles(evidence_archive_id, nodes_by_id, artifacts_by_node, seq)
@@ -106,16 +110,19 @@ def _validate_canonical(
 def _validate_artifacts(
     typed_artifacts: Any,
     evidence_archive_id: str,
-) -> dict[str, list[str]]:
+    nodes_by_id: dict[str, dict[str, Any]],
+) -> dict[str, list[tuple[str, str]]]:
     if not isinstance(typed_artifacts, list):
         raise BundleInputError("typed_artifacts must be a list")
-    artifacts_by_node: dict[str, list[str]] = {}
+    artifacts_by_node: dict[str, list[tuple[str, str]]] = {}
     seen: set[str] = set()
     for art in typed_artifacts:
         if not isinstance(art, dict):
             raise BundleInputError("typed artifact must be a dict")
         if art.get("evidence_archive_id") != evidence_archive_id:
             raise BundleInputError("typed artifact evidence_archive_id mismatch")
+        if art.get("artifact_profile") != TYPED_ARTIFACT_PROFILE:
+            raise BundleInputError("typed artifact artifact_profile is not the frozen P3 profile")
         artifact_id_value = art.get("artifact_id")
         if not artifact_id_value:
             raise BundleInputError("typed artifact missing artifact_id")
@@ -125,7 +132,14 @@ def _validate_artifacts(
         source_node_ref = art.get("source_node_ref")
         if not source_node_ref:
             raise BundleInputError("typed artifact missing source_node_ref")
-        artifacts_by_node.setdefault(source_node_ref, []).append(artifact_id_value)
+        if source_node_ref not in nodes_by_id:
+            raise BundleInputError(
+                "typed artifact source_node_ref not in SEA: %r" % (source_node_ref,)
+            )
+        pointer = art.get("source_artifact_pointer")
+        if not isinstance(pointer, str) or pointer == "":
+            raise BundleInputError("typed artifact missing source_artifact_pointer")
+        artifacts_by_node.setdefault(source_node_ref, []).append((artifact_id_value, pointer))
     return artifacts_by_node
 
 
@@ -137,16 +151,20 @@ def _message_bearing_sequence(
     node_refs: list[str],
     nodes_by_id: dict[str, dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Walk canonical order, skipping ``message = null`` structural nodes.
+    """Walk canonical order; only ``message = null`` is transparent.
 
-    Structural nodes are transparent for role-run grouping (§14.3): they do not
-    break an assistant run, and never become members or triggers.
+    A non-null malformed ``message`` (str / list / number / ...) is a run
+    boundary with unknown role — it is NOT transparent (§14.3 only skips
+    null-message structural nodes for run-boundary computation).
     """
     seq: list[dict[str, Any]] = []
     for ref in node_refs:
         payload = nodes_by_id[ref]["source_payload"]
         message = payload.get("message")
+        if message is None:
+            continue
         if not isinstance(message, dict):
+            seq.append({"source_node_id": ref, "role": None, "content_type": None})
             continue
         author = message.get("author")
         role = author.get("role") if isinstance(author, dict) else None
@@ -200,6 +218,20 @@ def _group_bundles(
     return bundles
 
 
+def _pointer_sort_key(pointer: str) -> tuple:
+    """Source order of a P3 ``source_artifact_pointer``.
+
+    ``/message/content`` (node-level) precedes ``/message/content/parts/<n>``;
+    parts sort numerically (``parts/2`` before ``parts/10``).
+    """
+    if pointer == "/message/content":
+        return (0,)
+    m = _PARTS_POINTER_RE.match(pointer)
+    if m:
+        return (1, int(m.group(1)))
+    return (2, pointer)
+
+
 def _resolve_state(content_types: list[Any]) -> str:
     """Resolved/ambiguous per §14.3. Never returns ``unbundled`` for v0.1."""
     terminals = [i for i, ct in enumerate(content_types) if ct in TERMINAL_VISIBLE_CONTENT_TYPES]
@@ -220,7 +252,7 @@ def _resolve_state(content_types: list[Any]) -> str:
 def _build_bundle(
     evidence_archive_id: str,
     nodes_by_id: dict[str, dict[str, Any]],
-    artifacts_by_node: dict[str, list[str]],
+    artifacts_by_node: dict[str, list[tuple[str, str]]],
     trigger_refs: list[str],
     member_refs: list[str],
     content_types: list[Any],
@@ -235,7 +267,8 @@ def _build_bundle(
 
     artifact_refs: list[str] = []
     for ref in member_refs:
-        artifact_refs.extend(artifacts_by_node.get(ref, []))
+        ordered = sorted(artifacts_by_node.get(ref, []), key=lambda t: _pointer_sort_key(t[1]))
+        artifact_refs.extend(artifact_id_value for artifact_id_value, _ in ordered)
 
     provenance_refs = [
         nodes_by_id[ref]["node_evidence_id"] for ref in trigger_refs
