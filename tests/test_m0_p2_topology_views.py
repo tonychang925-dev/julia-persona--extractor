@@ -148,6 +148,32 @@ def test_s10_multi_node_cycle():
     assert canonical["resolution_status"] == "invalid_cycle"
 
 
+def test_t01_missing_parent_diagnostics_exact():
+    parents = dict(PARENTS)
+    parents["a1"] = "ghost_parent"
+    canonical, _ = resolve_chatgpt_topology(_sea(parents))
+    assert canonical["offending_node_refs"] == ["a1"]
+    assert canonical["offending_parent_refs"] == ["ghost_parent"]
+    assert canonical["visited_node_refs"] == ["current", "a2", "a1"]
+
+
+def test_t02_self_parent_diagnostics_exact():
+    parents = dict(PARENTS)
+    parents["a2"] = "a2"
+    canonical, _ = resolve_chatgpt_topology(_sea(parents))
+    assert canonical["offending_node_refs"] == ["a2"]
+    assert canonical["offending_parent_refs"] == ["a2"]
+    assert canonical["visited_node_refs"] == ["current", "a2"]
+
+
+def test_t03_cycle_diagnostics_exact():
+    parents = {"root": None, "n1": "root", "n2": "n3", "n3": "n2"}
+    canonical, _ = resolve_chatgpt_topology(_sea(parents, current="n3"))
+    assert canonical["offending_node_refs"] == ["n2"]
+    assert canonical["offending_parent_refs"] == ["n3"]
+    assert canonical["visited_node_refs"] == ["n3", "n2"]
+
+
 def test_s11_invalid_topology_emits_no_resolved_fields():
     canonical, _ = resolve_chatgpt_topology(_sea(current=None))
     assert "lineage_id" not in canonical
@@ -235,6 +261,28 @@ def test_failure_records_are_schema_valid(current):
     jsonschema.Draft202012Validator(_lineage_schema()).validate(canonical)
 
 
+def _invalid_seas():
+    return [
+        ("missing_current", _sea(current=None)),
+        ("current_not_mapping", _sea(current="ghost")),
+        ("missing_parent", _sea(dict(PARENTS, a1="ghost_parent"))),
+        ("self_parent", _sea(dict(PARENTS, a2="a2"))),
+        ("cycle", _sea({"root": None, "n1": "root", "n2": "n3", "n3": "n2"}, current="n3")),
+    ]
+
+
+@pytest.mark.parametrize("name,sea", _invalid_seas(), ids=[n for n, _ in _invalid_seas()])
+def test_t04_every_invalid_status_emits_zero_alternates(name, sea):
+    _, alternates = resolve_chatgpt_topology(sea)
+    assert alternates == []
+
+
+@pytest.mark.parametrize("name,sea", _invalid_seas(), ids=[n for n, _ in _invalid_seas()])
+def test_t05_every_invalid_status_is_schema_valid(name, sea):
+    canonical, _ = resolve_chatgpt_topology(sea)
+    jsonschema.Draft202012Validator(_lineage_schema()).validate(canonical)
+
+
 def test_alternate_views_are_schema_valid():
     _, alternates = resolve_chatgpt_topology(_sea())
     schema = _alternate_schema()
@@ -274,5 +322,6 @@ def test_golden_private_acceptance_4026_33_4059():
 
     # root is the node whose parent is None; current is the traversal start.
     assert canonical["node_refs"][-1] == "3fa39e74-2fd4-4177-9df3-a150ba168e8a"
+    assert canonical["node_refs"][0] == "client-created-root"
     nodes_by_id = {n["source_node_id"]: n for n in sea["nodes"]}
     assert nodes_by_id[canonical["node_refs"][0]]["source_payload"].get("parent") is None
