@@ -1367,12 +1367,31 @@ For a scalar part (plain string, number, boolean, or null) inside `multimodal_te
 string part maps to `artifact_class = visible_text`; other scalar parts map to
 `unknown_typed_artifact`.
 
+### Object and array part classification
+
+For an object-valued part inside `multimodal_text.parts`:
+
+1. If `part.content_type` is a non-empty string, `source_content_type` MUST equal
+   that exact source-native value, and `artifact_class` MUST be resolved by the
+   same frozen classification table (`audio_transcription` →
+   `audio_transcription`, `image_asset_pointer` → `image_asset_pointer`, any
+   other non-empty source type → `unknown_typed_artifact`).
+2. If an object part has no usable `content_type`, `source_content_type` MUST
+   inherit `multimodal_text` and `artifact_class` MUST be `unknown_typed_artifact`.
+3. If a part is an array, `source_content_type` MUST inherit `multimodal_text`
+   and `artifact_class` MUST be `unknown_typed_artifact`.
+4. In every case, `payload` MUST remain the exact part value.
+
+The classification table applies both to top-level
+`message.content.content_type` and to object-valued
+`multimodal_text.parts[i].content_type`.
+
 ### Classification profile
 
 For profile `chatgpt-official-export-typed-artifact-v0.1`:
 
 ```text
-message.content.content_type    artifact_class
+observed source content_type     artifact_class
 thoughts                        exported_decision_trace
 reasoning_recap                 reasoning_execution_metadata
 text                            visible_text

@@ -90,3 +90,18 @@ def test_c06_interpretation_field_is_rejected():
         a = _minimal_artifact()
         a[field] = "not allowed"
         assert_invalid(schema, a)
+
+
+def test_c07_contract_freezes_object_part_classification():
+    """Contract §13.1 MUST unambiguously resolve object-part classification."""
+    contract = (REPO / "docs/M0_EVIDENCE_SUBSTRATE_CONTRACT.md").read_text()
+    assert "Object and array part classification" in contract
+    # Object part with its own source type MUST use that exact type, not fall back.
+    assert "audio_transcription" in contract
+    assert "image_asset_pointer" in contract
+    # The classification table must apply to part.content_type, not just top-level.
+    assert "observed source content_type" in contract
+    assert "multimodal_text.parts[i].content_type" in contract
+    # Object part without content_type, and array part, fall back to multimodal_text + unknown.
+    assert "If an object part has no usable `content_type`" in contract
+    assert "If a part is an array" in contract
