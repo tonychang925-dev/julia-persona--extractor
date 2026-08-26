@@ -38,13 +38,20 @@ def _minimal_bundle() -> dict:
         "member_node_refs": ["a1"],
         "artifact_refs": ["artifact_" + "e" * 64],
         "visible_response_refs": ["a1"],
-        "provenance_refs": ["node_" + "f" * 64, "node_" + "g" * 64],
+        "provenance_refs": ["node_" + "f" * 64, "node_" + "e" * 64],
     }
 
 
 # --------------------------------------------------------------------------- #
 # Schema enforcement (C01-C06)
 # --------------------------------------------------------------------------- #
+
+def test_c00_minimal_bundle_is_valid():
+    """Baseline: the shared fixture MUST itself be schema-valid, so the
+    negative tests below fail only for the field they intend to mutate."""
+    schema = load_schema()
+    assert_valid(schema, _minimal_bundle())
+
 
 def test_c01_missing_artifact_refs_is_rejected():
     schema = load_schema()
