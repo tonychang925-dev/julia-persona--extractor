@@ -283,7 +283,9 @@ def _normalized() -> dict:
                 "content": "hi",
                 "timestamp": None,
                 "source_evidence_ref": "node_" + "b" * 64,
+                "lineage_state": "not_resolved",
                 "lineage_ref": None,
+                "bundle_eligibility": "not_eligible",
                 "bundle_state": None,
                 "bundle_ref": None,
                 "provenance": {

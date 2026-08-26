@@ -64,7 +64,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["message_id", "role", "content", "provenance", "immutable_ref", "source_evidence_ref"],
+        "required": ["message_id", "role", "content", "provenance", "immutable_ref", "source_evidence_ref", "lineage_state", "bundle_eligibility"],
         "properties": {
           "message_id": { "type": "string", "minLength": 1 },
           "role": { "type": "string", "minLength": 1 },
@@ -74,8 +74,8 @@
           "source_evidence_ref": { "type": "string", "minLength": 1 },
           "lineage_ref": { "type": ["string", "null"] },
           "lineage_state": {
-            "type": ["string", "null"],
-            "enum": ["resolved", "not_resolved", null]
+            "type": "string",
+            "enum": ["resolved", "not_resolved"]
           },
           "bundle_state": {
             "type": ["string", "null"],
@@ -83,8 +83,8 @@
           },
           "bundle_ref": { "type": ["string", "null"] },
           "bundle_eligibility": {
-            "type": ["string", "null"],
-            "enum": ["eligible", "not_eligible", null]
+            "type": "string",
+            "enum": ["eligible", "not_eligible"]
           },
           "provenance": { "$ref": "#/$defs/provenance_record" },
           "immutable_ref": {

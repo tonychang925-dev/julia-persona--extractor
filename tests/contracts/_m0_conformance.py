@@ -157,35 +157,32 @@ def canonical_node_hash(source_payload: dict) -> str:
 # Evidence accounting conformance (contract §4.2.1, §10.5, §10.6)
 # --------------------------------------------------------------------------- #
 
-# For the ChatGPT mapping-entry admission profile, none of the structural/content
-# categories below is a valid exclusion reason (§4.2.1: every mapping entry MUST
-# be admitted). An ExclusionRecord using one of these is contract-invalid.
-FORBIDDEN_EXCLUSION_REASONS = frozenset(
-    {
-        "empty_content",
-        "null_message",
-        "unknown_content_type",
-        "alternate_branch",
-        "non_visible_artifact",
-        "unrecognized_metadata",
-    }
-)
+# The ChatGPT mapping-entry admission profile (§4.2.1) requires admitting every
+# mapping entry, and §10.5 forbids ad-hoc free-text exclusions. The frozen
+# allow-list of exclusion reason codes is therefore EMPTY for this profile.
+# An ExclusionRecord whose reason is not in the allow-list is contract-invalid.
+ALLOWED_EXCLUSION_REASONS = frozenset()
 
 
 def validate_evidence_accounting(
+    sea: dict,
     admitted_refs: list[str],
-    sea_node_source_ids: list[str],
-    exclusions: list[dict],
-    accounting: dict,
 ) -> list[str]:
-    """Validate the §10.6 accounting invariants against concrete A/P/E sets.
+    """Validate the §10.6 accounting invariants against the SEA artifact itself.
 
-    Returns a list of violation strings (empty means conforming). This is a
-    test-side conformance validator, not production code.
+    ``P`` is derived from ``sea.nodes``, ``E`` from ``sea.accounting.exclusions``
+    (NOT a parallel caller-provided list), and ``A`` is the declared admission
+    domain. Returns a list of violation strings (empty means conforming).
     """
+    nodes = sea.get("nodes", [])
+    accounting = sea.get("accounting", {})
+    exclusions = accounting.get("exclusions", [])
+
     admitted = set(admitted_refs)
-    preserved = set(sea_node_source_ids)
-    excluded = {ex["source_object_ref"] for ex in exclusions}
+    preserved_ids = [node.get("source_node_id") for node in nodes]
+    preserved = set(preserved_ids)
+    excluded_ids = [ex.get("source_object_ref") for ex in exclusions]
+    excluded = set(excluded_ids)
 
     violations: list[str] = []
     if preserved | excluded != admitted:
@@ -194,10 +191,12 @@ def validate_evidence_accounting(
         violations.append("P ∩ E != ∅")
     if len(preserved) + len(excluded) != len(admitted):
         violations.append("|P| + |E| != |A|")
-    if len(preserved) != len(sea_node_source_ids):
+    if len(preserved) != len(preserved_ids):
         violations.append("duplicate preserved source refs")
-    if len(excluded) != len(exclusions):
+    if len(excluded) != len(excluded_ids):
         violations.append("duplicate excluded source refs")
+    if len(excluded) != len(exclusions):
+        violations.append("exclusion record count mismatch")
     if accounting.get("preserved_node_count") != len(preserved):
         violations.append("preserved_node_count mismatch")
     if accounting.get("excluded_node_count") != len(excluded):
@@ -206,6 +205,6 @@ def validate_evidence_accounting(
         violations.append("source_node_count mismatch")
     for ex in exclusions:
         reason = ex.get("exclusion_reason_code")
-        if reason in FORBIDDEN_EXCLUSION_REASONS:
-            violations.append("forbidden exclusion reason: %s" % reason)
+        if reason not in ALLOWED_EXCLUSION_REASONS:
+            violations.append("exclusion reason not in allow-list: %s" % reason)
     return violations

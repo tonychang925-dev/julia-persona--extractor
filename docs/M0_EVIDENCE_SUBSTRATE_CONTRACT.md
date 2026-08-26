@@ -963,6 +963,20 @@ An implementation MUST NOT invent ad-hoc free-text exclusions as a substitute fo
 
 For the ChatGPT official-export mapping-entry admission profile, unknown or unsupported source object structure is NOT a valid reason for evidence exclusion because the complete `source_payload` is required to survive independently from adapter interpretation.
 
+### 10.5.1 Frozen exclusion-reason allow-list (precision amendment)
+
+The `exclusion_reason_code` allow-list is frozen per profile. For the
+ChatGPT mapping-entry admission profile (`chatgpt-official-export-mapping-entry-admission-v0.1`):
+
+```text
+ALLOWED_EXCLUSION_REASONS = ∅
+```
+
+Every mapping entry MUST be admitted (§4.2.1), so no exclusion reason is valid
+for this profile. A different admission profile MAY freeze its own non-empty
+allow-list. An `exclusion_reason_code` not present in the profile's allow-list is
+contract-invalid.
+
 ## 10.6 Accounting invariants
 
 For every declared admission domain:
@@ -1063,6 +1077,17 @@ It is NOT:
 ```
 
 The ordering MUST be deterministic.
+
+Normative ordering (precision amendment):
+
+```text
+CanonicalLineageView.node_refs        MUST be ordered root → current
+Failure-record visited_node_refs      MUST preserve traversal order current → root
+```
+
+`node_refs` uses root → current so that downstream consumers (NormalizedArchive,
+ResponseBundle, M1 segmentation) receive conversational forward order. Failure
+diagnostics preserve traversal order for reproducible defect classification.
 
 `lineage_id` MUST be derived as:
 

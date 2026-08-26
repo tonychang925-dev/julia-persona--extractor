@@ -11,7 +11,7 @@ from pathlib import Path
 import jsonschema
 
 from _m0_conformance import (
-    FORBIDDEN_EXCLUSION_REASONS,
+    ALLOWED_EXCLUSION_REASONS,
     bundle_id,
     canonical_node_hash,
     canonicalize,
@@ -211,80 +211,71 @@ def _exclusion(ref: str, reason: str) -> dict:
     }
 
 
-def _accounting(source: int, preserved: int, excluded: int) -> dict:
+def _sea_accounting(
+    node_ids: list[str],
+    exclusions: list[dict],
+    source: int,
+    preserved: int,
+    excluded: int,
+) -> dict:
     return {
-        "source_node_count": source,
-        "preserved_node_count": preserved,
-        "excluded_node_count": excluded,
-        "exclusions": [],
+        "nodes": [{"source_node_id": n} for n in node_ids],
+        "accounting": {
+            "source_node_count": source,
+            "preserved_node_count": preserved,
+            "excluded_node_count": excluded,
+            "exclusions": exclusions,
+        },
     }
 
 
 def test_h03_accounting_conformance_validator_accepts_conforming():
-    """validate_evidence_accounting returns no violations for a conforming A/P/E."""
+    """A conforming ChatGPT SEA has P = A and E = ∅ (allow-list empty)."""
     admitted = ["n1", "n2", "n3"]
-    preserved_nodes = ["n1", "n2"]
-    exclusions = [_exclusion("n3", "explicit_profile_exclusion")]
-    accounting = _accounting(3, 2, 1)
-    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting) == []
+    sea = _sea_accounting(["n1", "n2", "n3"], [], 3, 3, 0)
+    assert validate_evidence_accounting(sea, admitted) == []
 
 
 def test_h03_accounting_rejects_set_mismatch():
     """P ∪ E != A (missing admitted node) MUST be a violation."""
     admitted = ["n1", "n2", "n3", "n4"]
-    preserved_nodes = ["n1", "n2"]
-    exclusions = [_exclusion("n3", "explicit_profile_exclusion")]
-    accounting = _accounting(4, 2, 1)
-    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+    sea = _sea_accounting(["n1", "n2", "n3"], [], 4, 3, 0)
+    assert validate_evidence_accounting(sea, admitted)
 
 
 def test_h03_accounting_rejects_overlap():
     """P ∩ E != ∅ (a node both preserved and excluded) MUST be a violation."""
     admitted = ["n1", "n2"]
-    preserved_nodes = ["n1", "n2"]
-    exclusions = [_exclusion("n2", "explicit_profile_exclusion")]
-    accounting = _accounting(2, 2, 1)
-    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+    sea = _sea_accounting(["n1", "n2"], [_exclusion("n2", "empty_content")], 2, 2, 1)
+    violations = validate_evidence_accounting(sea, admitted)
+    assert any("P ∩ E" in v for v in violations)
 
 
 def test_h03_accounting_rejects_count_mismatch():
     """A preserved/excluded count that disagrees with the sets MUST be a violation."""
     admitted = ["n1", "n2", "n3"]
-    preserved_nodes = ["n1", "n2"]
-    exclusions = [_exclusion("n3", "explicit_profile_exclusion")]
-    accounting = _accounting(3, 1, 1)  # preserved_node_count = 1, actual = 2
-    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+    sea = _sea_accounting(["n1", "n2", "n3"], [], 3, 1, 0)  # preserved=1, actual=3
+    assert validate_evidence_accounting(sea, admitted)
 
 
 def test_h03_accounting_rejects_duplicate_preserved():
     """Duplicate preserved source refs MUST be a violation."""
     admitted = ["n1", "n2"]
-    preserved_nodes = ["n1", "n1"]
-    exclusions = [_exclusion("n2", "explicit_profile_exclusion")]
-    accounting = _accounting(2, 2, 1)
-    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+    sea = _sea_accounting(["n1", "n1"], [], 2, 2, 0)
+    assert validate_evidence_accounting(sea, admitted)
 
 
-def test_h03_accounting_rejects_forbidden_exclusion_reason():
-    """A structural exclusion reason (e.g. empty_content) MUST be a violation."""
+def test_h03_accounting_rejects_non_allow_list_reason():
+    """Any exclusion reason is invalid because the ChatGPT allow-list is empty."""
     admitted = ["n1", "n2"]
-    preserved_nodes = ["n1"]
-    exclusions = [_exclusion("n2", "empty_content")]
-    accounting = _accounting(2, 1, 1)
-    violations = validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
-    assert any("forbidden exclusion reason" in v for v in violations)
+    sea = _sea_accounting(["n1"], [_exclusion("n2", "empty_content")], 2, 1, 1)
+    violations = validate_evidence_accounting(sea, admitted)
+    assert any("not in allow-list" in v for v in violations)
 
 
-def test_h03_forbidden_reasons_cover_admission_categories():
-    """The forbidden set MUST cover the §4.2.1 admission categories."""
-    assert FORBIDDEN_EXCLUSION_REASONS >= {
-        "empty_content",
-        "null_message",
-        "unknown_content_type",
-        "alternate_branch",
-        "non_visible_artifact",
-        "unrecognized_metadata",
-    }
+def test_h03_allow_list_is_empty_for_chatgpt_profile():
+    """The ChatGPT admission-profile exclusion allow-list is frozen empty."""
+    assert ALLOWED_EXCLUSION_REASONS == frozenset()
 
 
 # --------------------------------------------------------------------------- #
@@ -419,7 +410,9 @@ def _minimal_normalized_archive() -> dict:
                 "content": "hi",
                 "timestamp": None,
                 "source_evidence_ref": "node_" + "b" * 64,
+                "lineage_state": "not_resolved",
                 "lineage_ref": None,
+                "bundle_eligibility": "not_eligible",
                 "bundle_state": None,
                 "bundle_ref": None,
                 "provenance": {
