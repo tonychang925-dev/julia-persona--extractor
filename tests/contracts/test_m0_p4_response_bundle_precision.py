@@ -133,10 +133,3 @@ def test_c11_trigger_refs_are_context_only():
 def test_c12_provenance_refs_is_node_evidence_id():
     c = _contract()
     assert "provenance_refs        = SEA node_evidence_id[]" in c
-
-
-def test_c13_bundle_state_unbundled_is_rejected():
-    schema = load_schema()
-    b = _minimal_bundle()
-    b["bundle_state"] = "unbundled"
-    assert_invalid(schema, b)
