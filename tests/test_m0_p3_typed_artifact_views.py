@@ -339,6 +339,6 @@ def test_golden_private_acceptance_4060():
     # G04: SEA unchanged.
     assert sea == sea_before
 
-    # G05: deterministic across repeated builds.
+    # G05: deterministic across repeated builds (entire artifact, not just IDs).
     artifacts2 = build_chatgpt_typed_artifacts(sea)
-    assert [a["artifact_id"] for a in artifacts] == [a["artifact_id"] for a in artifacts2]
+    assert artifacts == artifacts2
