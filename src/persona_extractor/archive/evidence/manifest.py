@@ -33,12 +33,16 @@ def build_raw_source_manifest(
     caller MUST NOT pre-parse or reserialize before calling this.
     """
     source_sha256 = sha256_hex(source_bytes)
+    locator = source_locator or {}
     return {
         "schema_version": "0.1.0",
         "source_archive_id": source_archive_id(source_type, source_sha256),
         "source_type": source_type,
         "source_sha256": source_sha256,
-        "source_locator": source_locator or {"path": None, "uri": None},
+        "source_locator": {
+            "path": locator.get("path"),
+            "uri": locator.get("uri"),
+        },
         "ingested_at": ingested_at,
         "adapter": {
             "name": adapter_name,

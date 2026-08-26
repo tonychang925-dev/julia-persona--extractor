@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from typing import Any
 
 import jcs
@@ -38,11 +39,14 @@ def jcs_hash(value: Any) -> str:
 
 
 def parse_json_strict(raw: bytes) -> Any:
-    """Parse UTF-8 JSON bytes, rejecting duplicate object member names.
+    """Parse UTF-8 JSON bytes strictly.
 
-    Contract §10.1: a parser used for semantic canonical hashing MUST reject
-    duplicate JSON object member names (or preserve them losslessly). Python's
-    default ``json.loads`` silently last-key-wins, which is forbidden here.
+    Rejects, at parse time:
+
+    - duplicate JSON object member names (§10.1, no silent last-key-wins);
+    - non-standard constants ``NaN`` / ``Infinity`` / ``-Infinity``;
+    - non-finite numbers (e.g. ``1e400`` overflowing to ``inf``), which cannot be
+      represented under RFC 8785/JCS and MUST take a deterministic failure path.
     """
     def _reject_duplicates(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
         result: dict[str, Any] = {}
@@ -52,4 +56,18 @@ def parse_json_strict(raw: bytes) -> Any:
             result[key] = value
         return result
 
-    return json.loads(raw.decode("utf-8"), object_pairs_hook=_reject_duplicates)
+    def _reject_constant(value: str) -> Any:
+        raise ValueError("non-standard JSON constant: %s" % value)
+
+    def _parse_float(value: str) -> float:
+        result = float(value)
+        if not math.isfinite(result):
+            raise ValueError("non-finite JSON number: %s" % value)
+        return result
+
+    return json.loads(
+        raw.decode("utf-8"),
+        object_pairs_hook=_reject_duplicates,
+        parse_constant=_reject_constant,
+        parse_float=_parse_float,
+    )

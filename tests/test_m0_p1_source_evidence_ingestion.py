@@ -161,8 +161,31 @@ def test_s10_duplicate_json_key_is_rejected():
         parse_json_strict(b'{"a": 1, "a": 2}')
 
 
+@pytest.mark.parametrize("bad", [b'{"x": NaN}', b'{"x": Infinity}', b'{"x": -Infinity}'])
+def test_s10bcd_non_standard_constants_are_rejected(bad):
+    with pytest.raises(ValueError):
+        parse_json_strict(bad)
+
+
+def test_s10e_non_finite_number_is_rejected():
+    with pytest.raises(ValueError):
+        parse_json_strict(b'{"x": 1e400}')
+
+
 def test_s11_json_pointer_applies_rfc6901_escaping():
     assert rfc6901_escape("a/b~c") == "a~1b~0c"
+
+
+def test_s11b_negative_array_selector_is_rejected():
+    raw = json.dumps([_synthetic_conversation()]).encode("utf-8")
+    with pytest.raises(IndexError):
+        build_chatgpt_source_evidence(raw, -1, None)
+
+
+def test_s11c_out_of_range_array_selector_is_rejected():
+    raw = json.dumps([_synthetic_conversation()]).encode("utf-8")
+    with pytest.raises(IndexError):
+        build_chatgpt_source_evidence(raw, 5, None)
 
 
 # --------------------------------------------------------------------------- #
@@ -176,6 +199,16 @@ def test_s12_api_does_not_accept_caller_admitted_refs():
     params = list(sig.parameters)
     assert "admitted_refs" not in params
     assert "mapping" not in params
+
+
+def test_h01_source_locator_is_canonicalized_to_path_and_uri():
+    """A partial locator must be canonicalized to the schema shape {path, uri}."""
+    conv = _synthetic_conversation()
+    raw = json.dumps(conv).encode("utf-8")
+    manifest, _ = build_chatgpt_source_evidence(raw, None, {"path": "foo.json"})
+    assert set(manifest["source_locator"].keys()) == {"path", "uri"}
+    assert manifest["source_locator"]["path"] == "foo.json"
+    assert manifest["source_locator"]["uri"] is None
 
 
 # --------------------------------------------------------------------------- #
@@ -199,7 +232,11 @@ def test_golden_private_acceptance_4059_4059_0():
     if not path:
         pytest.skip("GOLDEN_MIRA_FIXTURE_PATH not set")
     raw = Path(path).read_bytes()
-    _, sea = build_chatgpt_source_evidence(raw, None, {"path": path, "uri": None})
+    manifest, sea = build_chatgpt_source_evidence(raw, None, {"path": path, "uri": None})
+    # identity binding: this MUST be the actual Golden source, not merely a
+    # 4059-node file that happens to collide.
+    assert manifest["source_sha256"] == "564ef9b1aa5457b56751f550d80b0eaa24e144f8d08bd2f6b8c0ff870b8e9420"
+    assert sea["source_native"]["conversation_id"] == "6a754a53-82c4-83e8-b9a2-610154053181"
     assert sea["accounting"]["source_node_count"] == 4059
     assert sea["accounting"]["preserved_node_count"] == 4059
     assert sea["accounting"]["excluded_node_count"] == 0

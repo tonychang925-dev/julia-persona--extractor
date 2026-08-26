@@ -72,6 +72,8 @@ def _select_conversation(
 
 def _resolve_index(conversations: list[Any], selector: int | str | None) -> int:
     if isinstance(selector, int):
+        if selector < 0 or selector >= len(conversations):
+            raise IndexError("conversation index out of range: %r" % selector)
         return selector
     if isinstance(selector, str):
         for index, conversation in enumerate(conversations):
