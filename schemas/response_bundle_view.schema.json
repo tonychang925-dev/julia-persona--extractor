@@ -24,7 +24,7 @@
     },
     "bundle_state": {
       "type": "string",
-      "enum": ["resolved", "ambiguous", "unbundled"]
+      "enum": ["resolved", "ambiguous"]
     },
     "evidence_archive_id": { "type": "string", "minLength": 1 },
     "resolution_profile": {

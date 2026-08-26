@@ -1732,7 +1732,9 @@ inject alternate nodes as members.
 
 For profile `chatgpt-official-export-response-bundle-v0.1`, `unbundled` is NEVER
 emitted (no explicit unbundled rule is frozen). An unresolved assistant run MUST
-be `ambiguous`.
+be `ambiguous`. The `bundle_state` schema enum for this profile is therefore
+`["resolved", "ambiguous"]`; an instance with `bundle_state = "unbundled"` is
+schema-invalid.
 
 ---
 
