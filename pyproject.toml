@@ -11,10 +11,10 @@ requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Julia Persona Ecosystem Contributors" }]
 keywords = ["persona", "evidence", "causal-experience", "continuity", "archive-normalization"]
-dependencies = ["jsonschema>=4.22.0"]
+dependencies = ["jsonschema>=4.22.0", "jcs==0.2.1"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0.0", "ruff>=0.5.0", "jcs==0.2.1"]
+dev = ["pytest>=8.0.0", "ruff>=0.5.0"]
 
 [project.scripts]
 persona-extractor = "persona_extractor.cli:main"
