@@ -252,6 +252,44 @@ def test_s26_artifact_id_recomputes_from_frozen_inputs():
         assert a["artifact_id"] == expected
 
 
+def test_t01_object_part_without_content_type():
+    content = _content("multimodal_text", parts=[{"foo": 1}])
+    arts = build_chatgpt_typed_artifacts(_sea([_node("n1", {"content": content})]))
+    assert len(arts) == 1
+    a = arts[0]
+    assert a["source_content_type"] == "multimodal_text"
+    assert a["artifact_class"] == "unknown_typed_artifact"
+    assert a["payload"] == {"foo": 1}
+    assert a["source_artifact_pointer"] == "/message/content/parts/0"
+
+
+def test_t02_array_part():
+    content = _content("multimodal_text", parts=[["x", {"y": 1}]])
+    arts = build_chatgpt_typed_artifacts(_sea([_node("n1", {"content": content})]))
+    assert len(arts) == 1
+    a = arts[0]
+    assert a["source_content_type"] == "multimodal_text"
+    assert a["artifact_class"] == "unknown_typed_artifact"
+    assert a["payload"] == ["x", {"y": 1}]
+    assert a["source_artifact_pointer"] == "/message/content/parts/0"
+
+
+def _resolve_pointer(doc: dict, pointer: str):
+    """Test-side RFC 6901 pointer resolver (relative to a node's source_payload)."""
+    if pointer == "":
+        return doc
+    tokens = [t.replace("~1", "/").replace("~0", "~") for t in pointer.split("/")[1:]]
+    result = doc
+    for token in tokens:
+        if isinstance(result, dict):
+            result = result[token]
+        elif isinstance(result, list):
+            result = result[int(token)]
+        else:
+            raise KeyError(pointer)
+    return result
+
+
 # --------------------------------------------------------------------------- #
 # Golden private acceptance (only when GOLDEN_MIRA_FIXTURE_PATH is set)
 # --------------------------------------------------------------------------- #
@@ -264,6 +302,9 @@ def test_golden_private_acceptance_4060():
     manifest, sea = build_chatgpt_source_evidence(raw, None, {"path": path, "uri": None})
     assert manifest["source_sha256"] == "564ef9b1aa5457b56751f550d80b0eaa24e144f8d08bd2f6b8c0ff870b8e9420"
     assert sea["source_native"]["conversation_id"] == "6a754a53-82c4-83e8-b9a2-610154053181"
+
+    nodes_by_id = {n["source_node_id"]: n for n in sea["nodes"]}
+    sea_before = copy.deepcopy(sea)
 
     artifacts = build_chatgpt_typed_artifacts(sea)
     assert len(artifacts) == 4060
@@ -279,3 +320,25 @@ def test_golden_private_acceptance_4060():
     assert counts["unknown_typed_artifact"] == 0
 
     assert len({a["artifact_id"] for a in artifacts}) == 4060
+
+    # G01: every source_node_ref resolves to a SEA node.
+    for a in artifacts:
+        assert a["source_node_ref"] in nodes_by_id
+
+    # G02: every payload equals the exact value at its RFC 6901 pointer.
+    for a in artifacts:
+        node = nodes_by_id[a["source_node_ref"]]
+        resolved = _resolve_pointer(node["source_payload"], a["source_artifact_pointer"])
+        assert resolved == a["payload"]
+
+    # G03: every artifact is schema-valid.
+    schema = _schema()
+    for a in artifacts:
+        jsonschema.Draft202012Validator(schema).validate(a)
+
+    # G04: SEA unchanged.
+    assert sea == sea_before
+
+    # G05: deterministic across repeated builds.
+    artifacts2 = build_chatgpt_typed_artifacts(sea)
+    assert [a["artifact_id"] for a in artifacts] == [a["artifact_id"] for a in artifacts2]
