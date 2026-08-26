@@ -52,12 +52,30 @@ def test_h01_t01_rfc8785_conformance_vector():
     assert sha256_hex(canonical) == expected_hash
 
 
+# Frozen independent vectors: (python_value, expected_rfc8785_canonical, expected_sha256).
+# The expected canonical strings are RFC 8785 / ECMAScript-defined outputs, and the
+# hashes are SHA-256 over those exact strings. They do NOT come from this helper.
+RFC8785_VECTORS = [
+    ({"n": 1.0}, '{"n":1}', "2bfd14f43d17fc7cea24e0917a8879b4b2f880b8baeec1b9d90fbaad655e71bd"),
+    ({"n": 1e-7}, '{"n":1e-7}', "747d6d23b64d1b2d579adb832b44de31c91c875bbef7a8e397f5d183a746b54b"),
+    ({"s": 'a"b'}, '{"s":"a\\"b"}', "710dbb3ed82221651ba402bf2db94826c9f31dbc9c7ee7c46510425dd7af991b"),
+    ({"s": "a\nb"}, '{"s":"a\\nb"}', "539d05783bcaa18932974451c64e9489fa08792d632859fd746379bbec1d8db7"),
+]
+
+
+def test_h01_t02_rfc8785_vectors_reproduce_exactly():
+    """Canonical output and SHA-256 MUST match frozen independent vectors."""
+    for value, expected_canonical, expected_hash in RFC8785_VECTORS:
+        assert canonicalize(value) == expected_canonical
+        assert sha256_hex(expected_canonical) == expected_hash
+
+
 def test_h01_t02_canonical_node_hash_is_deterministic_semantic_hash():
-    """canonical_node_hash MUST equal SHA256(JCS(source_payload))."""
+    """canonical_node_hash MUST equal SHA256(JCS(source_payload)) deterministically."""
     payload = {"content_type": "thoughts", "content": "保持自然真诚"}
-    assert canonical_node_hash(payload) == jcs_hash(payload)
     assert canonical_node_hash(payload) == canonical_node_hash(dict(payload))
     assert len(canonical_node_hash(payload)) == 64
+    assert canonical_node_hash(payload) == sha256_hex(canonicalize(payload))
 
 
 def test_h01_key_order_does_not_change_canonicalization():
@@ -191,6 +209,39 @@ def test_h05_ambiguous_bundle_ref_is_mandatory():
     broken = dict(archive)
     broken["messages"][0]["bundle_ref"] = None
     assert_invalid(schema, broken)
+
+
+def test_h05_resolved_bundle_ref_absent_is_rejected():
+    """bundle_state=resolved with bundle_ref ABSENT (not merely null) is rejected."""
+    schema = load_schema("normalized_archive.schema.json")
+    archive = _minimal_normalized_archive()
+    archive["messages"][0]["bundle_state"] = "resolved"
+    archive["messages"][0].pop("bundle_ref")
+    assert_invalid(schema, archive)
+
+
+def test_h05_ambiguous_bundle_ref_absent_is_rejected():
+    """bundle_state=ambiguous with bundle_ref ABSENT (not merely null) is rejected."""
+    schema = load_schema("normalized_archive.schema.json")
+    archive = _minimal_normalized_archive()
+    archive["messages"][0]["bundle_state"] = "ambiguous"
+    archive["messages"][0].pop("bundle_ref")
+    assert_invalid(schema, archive)
+
+
+def test_h05_resolved_lineage_requires_non_null_lineage_ref():
+    """lineage_state=resolved requires a non-null lineage_ref (§15.2.1)."""
+    schema = load_schema("normalized_archive.schema.json")
+    archive = _minimal_normalized_archive()
+    archive["messages"][0]["lineage_state"] = "resolved"
+    archive["messages"][0]["lineage_ref"] = "lineage_" + "a" * 64
+    assert_valid(schema, archive)
+    absent = dict(archive)
+    absent["messages"][0].pop("lineage_ref")
+    assert_invalid(schema, absent)
+    nulled = dict(archive)
+    nulled["messages"][0]["lineage_ref"] = None
+    assert_invalid(schema, nulled)
 
 
 # --------------------------------------------------------------------------- #

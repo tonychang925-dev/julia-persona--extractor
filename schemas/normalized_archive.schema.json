@@ -73,6 +73,10 @@
           "timestamp": { "type": ["string", "null"], "format": "date-time" },
           "source_evidence_ref": { "type": "string", "minLength": 1 },
           "lineage_ref": { "type": ["string", "null"] },
+          "lineage_state": {
+            "type": ["string", "null"],
+            "enum": ["resolved", "not_resolved", null]
+          },
           "bundle_state": {
             "type": ["string", "null"],
             "enum": ["resolved", "ambiguous", "unbundled", null]
@@ -98,6 +102,7 @@
               "required": ["bundle_state"]
             },
             "then": {
+              "required": ["bundle_ref"],
               "properties": { "bundle_ref": { "type": "string", "minLength": 1 } }
             }
           },
@@ -107,7 +112,18 @@
               "required": ["bundle_state"]
             },
             "then": {
+              "required": ["bundle_ref"],
               "properties": { "bundle_ref": { "type": "string", "minLength": 1 } }
+            }
+          },
+          {
+            "if": {
+              "properties": { "lineage_state": { "const": "resolved" } },
+              "required": ["lineage_state"]
+            },
+            "then": {
+              "required": ["lineage_ref"],
+              "properties": { "lineage_ref": { "type": "string", "minLength": 1 } }
             }
           }
         ]

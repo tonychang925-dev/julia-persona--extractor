@@ -51,10 +51,15 @@ def _escape_string(value: str) -> str:
 def _number_to_jcs(value: int | float) -> str:
     """Serialize a number with ECMAScript-style JSON number semantics.
 
-    This reference covers the cases required by the contract vectors: integers
-    and ordinary non-integral floats. Integral floats collapse to integer form
-    (``1.0`` -> ``"1"``), matching RFC 8785 / ECMAScript, which differs from
-    Python ``repr``.
+    Differences from Python ``repr`` that this reference handles:
+
+    - integral floats collapse to integer form (``1.0`` -> ``"1"``);
+    - exponent leading zeros are removed (``1e-07`` -> ``"1e-7"``).
+
+    This is a contract-conformance reference, not a byte-for-byte reimplementation
+    of ECMAScript Number::toString for every possible double. Conformance is
+    proven against the frozen hard-coded vectors in the test suite, not by this
+    function asserting about itself.
     """
     if isinstance(value, bool):
         # bool is a subclass of int; guard explicitly (JSON has no bool-number).
@@ -66,7 +71,16 @@ def _number_to_jcs(value: int | float) -> str:
             raise ValueError("NaN/Infinity cannot be canonically serialized")
         if value.is_integer():
             return str(int(value))
-        return repr(value)
+        text = repr(value)
+        if "e" in text or "E" in text:
+            mantissa, exponent = text.lower().split("e", 1)
+            sign = ""
+            if exponent[:1] in ("+", "-"):
+                sign = exponent[0]
+                exponent = exponent[1:]
+            exponent = exponent.lstrip("0") or "0"
+            text = mantissa + "e" + sign + exponent
+        return text
     raise TypeError("unsupported number type: %r" % type(value))
 
 

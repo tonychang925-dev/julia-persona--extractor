@@ -126,6 +126,16 @@ def test_ff02_resolved_lineage_terminates_at_root():
     assert refs == ["n3", "n2", "n1"]
 
 
+def test_ff02_missing_current_node_sea_valid_and_invalid_status():
+    """A conforming SEA with missing current_node MUST validate AND resolve to invalid_missing_current_node."""
+    sea_schema = load_schema("source_evidence_archive.schema.json")
+    sea = _sea(_node())
+    sea["source_native"]["current_node"] = None  # missing/unusable selector
+    assert_valid(sea_schema, sea)  # evidence preserved, not rejected by SEA schema
+    status, _ = resolve_lineage({}, sea["source_native"]["current_node"])
+    assert status == "invalid_missing_current_node"
+
+
 # --------------------------------------------------------------------------- #
 # FF-03 — Normalized schema 0.3.0 enforcement
 # --------------------------------------------------------------------------- #
@@ -145,6 +155,24 @@ def test_ff03_t02_normalized_schema_machine_enforces_traceability_conditionals()
     missing_ref = _normalized()
     missing_ref.pop("source_evidence_archive_ref")
     assert_invalid(schema, missing_ref)
+
+
+def test_ff03_t03_resolved_bundle_requires_bundle_ref_present():
+    """bundle_state=resolved with bundle_ref ABSENT (not merely null) is rejected."""
+    schema = load_schema("normalized_archive.schema.json")
+    archive = _normalized()
+    archive["messages"][0]["bundle_state"] = "resolved"
+    archive["messages"][0].pop("bundle_ref")
+    assert_invalid(schema, archive)
+
+
+def test_ff03_t04_resolved_lineage_requires_lineage_ref_present():
+    """lineage_state=resolved with lineage_ref ABSENT is rejected."""
+    schema = load_schema("normalized_archive.schema.json")
+    archive = _normalized()
+    archive["messages"][0]["lineage_state"] = "resolved"
+    archive["messages"][0].pop("lineage_ref")
+    assert_invalid(schema, archive)
 
 
 # --------------------------------------------------------------------------- #
