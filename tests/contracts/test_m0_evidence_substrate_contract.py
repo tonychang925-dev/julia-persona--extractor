@@ -144,7 +144,10 @@ def test_t06_typed_artifact_view_preserves_typed_payload():
     artifact = {
         "schema_version": "0.1.0",
         "artifact_id": "artifact_" + "c" * 64,
+        "evidence_archive_id": "sea_" + "b" * 64,
         "source_node_ref": "n5",
+        "source_artifact_pointer": "/message/content",
+        "artifact_profile": "chatgpt-official-export-typed-artifact-v0.1",
         "source_content_type": "thoughts",
         "artifact_class": "exported_decision_trace",
         "evidence_class": "observed_export_artifact",
@@ -317,7 +320,10 @@ def _typed() -> dict:
     return {
         "schema_version": "0.1.0",
         "artifact_id": "artifact_" + "c" * 64,
+        "evidence_archive_id": "sea_" + "b" * 64,
         "source_node_ref": "n5",
+        "source_artifact_pointer": "/message/content",
+        "artifact_profile": "chatgpt-official-export-typed-artifact-v0.1",
         "source_content_type": "thoughts",
         "artifact_class": "exported_decision_trace",
         "evidence_class": "observed_export_artifact",

@@ -1328,6 +1328,65 @@ exported thoughts
 ≠ identity evidence by themselves
 ```
 
+## 13.1 Typed Artifact Addressability (precision amendment)
+
+A TypedArtifactView MUST carry three additional required fields so that its
+identity is fully recomputable from the artifact alone plus the upstream SEA:
+
+```text
+evidence_archive_id        MUST, non-empty
+source_node_ref            MUST, the SEA source_node_id (source-native mapping key)
+source_artifact_pointer    MUST, RFC 6901 pointer relative to source_payload
+artifact_profile           MUST, const "chatgpt-official-export-typed-artifact-v0.1"
+```
+
+`source_artifact_pointer` is an RFC 6901 pointer relative to the SEA node's
+`source_payload` (e.g. `/message/content`, `/message/content/parts/0`). It is NOT
+a physical-source absolute pointer; SEA node provenance already locates the node
+in the physical source.
+
+`payload` MUST equal the exact parsed source-native JSON value addressed by
+`source_artifact_pointer`. No wrapping, flattening, stringification, or field
+projection is permitted. `payload` MAY be any JSON value (object, array, string,
+number, boolean, or null).
+
+### Multimodal leaf granularity
+
+`multimodal_text` is a typed routing container, not a leaf artifact. It MUST NOT
+produce a container-level TypedArtifactView. Instead, each `parts[i]` produces
+exactly one leaf TypedArtifactView with `source_artifact_pointer` equal to
+`/message/content/parts/<i>`.
+
+If `multimodal_text.parts` is not a list, the whole content object MUST be
+emitted as exactly one `unknown_typed_artifact` with pointer `/message/content`.
+
+### source_content_type inheritance
+
+For a scalar part (plain string, number, boolean, or null) inside `multimodal_text`,
+`source_content_type` MUST inherit `multimodal_text` (no invented type). A plain
+string part maps to `artifact_class = visible_text`; other scalar parts map to
+`unknown_typed_artifact`.
+
+### Classification profile
+
+For profile `chatgpt-official-export-typed-artifact-v0.1`:
+
+```text
+message.content.content_type    artifact_class
+thoughts                        exported_decision_trace
+reasoning_recap                 reasoning_execution_metadata
+text                            visible_text
+audio_transcription             audio_transcription
+image_asset_pointer             image_asset_pointer
+multimodal_text                 split parts; no container artifact
+any other non-empty string      unknown_typed_artifact
+```
+
+`thoughts` and `reasoning_recap` MUST each produce exactly ONE artifact with
+pointer `/message/content`; they MUST NOT be decomposed into internal entries.
+
+`evidence_class` MUST always be `observed_export_artifact`.
+
 ---
 
 # 14. ResponseBundleView Contract

@@ -7,7 +7,10 @@
   "required": [
     "schema_version",
     "artifact_id",
+    "evidence_archive_id",
     "source_node_ref",
+    "source_artifact_pointer",
+    "artifact_profile",
     "source_content_type",
     "artifact_class",
     "evidence_class",
@@ -20,7 +23,13 @@
       "minLength": 1,
       "pattern": "^artifact_[0-9a-f]{64}$"
     },
+    "evidence_archive_id": { "type": "string", "minLength": 1 },
     "source_node_ref": { "type": "string", "minLength": 1 },
+    "source_artifact_pointer": { "type": "string", "minLength": 1 },
+    "artifact_profile": {
+      "type": "string",
+      "const": "chatgpt-official-export-typed-artifact-v0.1"
+    },
     "source_content_type": { "type": "string", "minLength": 1 },
     "artifact_class": {
       "type": "string",
@@ -34,7 +43,7 @@
       ]
     },
     "evidence_class": { "type": "string", "const": "observed_export_artifact" },
-    "payload": { "type": "object" }
+    "payload": {}
   },
   "additionalProperties": false
 }
