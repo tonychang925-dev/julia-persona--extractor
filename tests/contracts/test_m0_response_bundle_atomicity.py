@@ -135,6 +135,8 @@ def test_h04_t04_member_non_overlap_and_full_coverage():
 # --------------------------------------------------------------------------- #
 
 def _bundle(state: str, member_node_refs: list[str]) -> dict:
+    visible = [member_node_refs[-1]] if state == "resolved" and member_node_refs else []
+    provenance = ["node_" + ("%064x" % i) for i in range(len(member_node_refs) + 1)]
     return {
         "schema_version": "0.1.0",
         "bundle_id": "bundle_" + "d" * 64,
@@ -143,5 +145,7 @@ def _bundle(state: str, member_node_refs: list[str]) -> dict:
         "resolution_profile": "chatgpt-official-export-response-bundle-v0.1",
         "trigger_refs": ["u1"],
         "member_node_refs": member_node_refs,
-        "provenance_refs": ["u1", *member_node_refs],
+        "artifact_refs": [],
+        "visible_response_refs": visible,
+        "provenance_refs": provenance,
     }

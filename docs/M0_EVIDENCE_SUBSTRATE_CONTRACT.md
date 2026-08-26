@@ -1701,6 +1701,39 @@ This is the normative M0 → M1 compatibility amendment.
 
 Ambiguous bundle candidates MUST preserve their ambiguity through downstream traceability.
 
+## 14.6 Bundle Reference Semantics (precision amendment)
+
+The reference namespaces of a ResponseBundleView are frozen as follows:
+
+```text
+trigger_refs           = SEA source_node_id[]   — contextual user nodes
+member_node_refs       = SEA source_node_id[]   — assistant-run members
+visible_response_refs  = SEA source_node_id[]   — recognized terminal visible response nodes
+artifact_refs          = TypedArtifactView.artifact_id[] — P3 artifacts attached to member nodes
+provenance_refs        = SEA node_evidence_id[] — evidence refs for trigger + member, canonical order
+```
+
+`CanonicalLineageView` is the EXCLUSIVE membership domain and ordering authority.
+`SEA` is a dereference input only (source-native message / role / content_type /
+node_evidence_id). `TypedArtifactView[]` is a join input only (fills
+`artifact_refs`). P4 MUST NOT recompute topology from SEA, and MUST NOT let SEA
+inject alternate nodes as members.
+
+- `trigger_refs` are contextual user nodes; they are NOT bundle members, do NOT
+  participate in `bundle_id`, and do NOT determine atomicity.
+- `visible_response_refs` is node-level (source_node_id), NOT artifact-level. For
+  a resolved bundle, `len(visible_response_refs) == 1` and
+  `visible_response_refs[0] == member_node_refs[-1]`.
+- `artifact_refs` MUST contain only `TypedArtifactView.artifact_id` values whose
+  `source_node_ref` is in `member_node_refs`. A multimodal terminal member may
+  contribute multiple leaf artifact IDs.
+- `provenance_refs` MUST contain the SEA `node_evidence_id` for each trigger and
+  member ref, in canonical contextual/member order.
+
+For profile `chatgpt-official-export-response-bundle-v0.1`, `unbundled` is NEVER
+emitted (no explicit unbundled rule is frozen). An unresolved assistant run MUST
+be `ambiguous`.
+
 ---
 
 # 15. NormalizedConversationArchive 0.3 Contract

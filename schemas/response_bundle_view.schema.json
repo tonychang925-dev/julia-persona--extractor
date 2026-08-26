@@ -12,6 +12,8 @@
     "resolution_profile",
     "trigger_refs",
     "member_node_refs",
+    "artifact_refs",
+    "visible_response_refs",
     "provenance_refs"
   ],
   "properties": {
@@ -31,9 +33,17 @@
     },
     "trigger_refs": { "type": "array", "items": { "type": "string" } },
     "member_node_refs": { "type": "array", "items": { "type": "string" } },
-    "artifact_refs": { "type": "array", "items": { "type": "string" } },
+    "artifact_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^artifact_[0-9a-f]{64}$" }
+    },
     "visible_response_refs": { "type": "array", "items": { "type": "string" } },
-    "provenance_refs": { "type": "array", "items": { "type": "string" } }
+    "provenance_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^node_[0-9a-f]{64}$" }
+    }
   },
   "additionalProperties": false,
   "allOf": [
@@ -45,7 +55,8 @@
       "then": {
         "required": ["member_node_refs"],
         "properties": {
-          "member_node_refs": { "type": "array", "minItems": 1 }
+          "member_node_refs": { "type": "array", "minItems": 1 },
+          "visible_response_refs": { "type": "array", "minItems": 1, "maxItems": 1 }
         }
       }
     }
