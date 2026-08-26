@@ -103,6 +103,7 @@ def test_t04_lineage_view_requires_deterministic_resolution():
         "evidence_archive_id": "sea_" + "a" * 64,
         "current_node_id": "n3",
         "resolution_method": "source_native_parent_ancestry",
+        "resolution_profile": "chatgpt-official-export-canonical-lineage-v0.1",
         "lineage_id": "lineage_" + "b" * 64,
         "node_refs": ["n1", "n2", "n3"],
     }

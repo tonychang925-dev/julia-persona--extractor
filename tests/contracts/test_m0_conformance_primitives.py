@@ -11,6 +11,7 @@ from pathlib import Path
 import jsonschema
 
 from _m0_conformance import (
+    FORBIDDEN_EXCLUSION_REASONS,
     bundle_id,
     canonical_node_hash,
     canonicalize,
@@ -20,6 +21,7 @@ from _m0_conformance import (
     node_evidence_id,
     sha256_hex,
     source_archive_id,
+    validate_evidence_accounting,
     view_id,
 )
 
@@ -89,6 +91,23 @@ def test_h01_key_order_does_not_change_canonicalization():
     a = {"b": 1, "a": 2}
     b = {"a": 2, "b": 1}
     assert canonicalize(a) == canonicalize(b)
+
+
+def test_h01_duplicate_json_object_keys_are_rejected():
+    """A parser MUST reject duplicate JSON object member names (§10.1)."""
+    def strict_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("duplicate JSON object member: %r" % key)
+            result[key] = value
+        return result
+
+    try:
+        json.loads('{"a": 1, "a": 2}', object_pairs_hook=strict_object)
+    except ValueError:
+        return
+    raise AssertionError("duplicate JSON object member was not rejected")
 
 
 # --------------------------------------------------------------------------- #
@@ -165,7 +184,7 @@ def test_h03_t03_exclusion_record_requires_normative_fields():
             "source_object_ref": "n3",
             "json_pointer": "/mapping/n3",
             "canonical_object_hash": "d" * 64,
-            "exclusion_reason_code": "empty_content",
+            "exclusion_reason_code": "explicit_profile_exclusion",
             "exclusion_rule_id": "M0-EXC-001",
             "exclusion_rule_version": "v0.1",
             "adapter": {"name": "chatgpt_official_export", "version": "0.1.0"},
@@ -177,6 +196,95 @@ def test_h03_t03_exclusion_record_requires_normative_fields():
     broken = dict(base)
     broken["accounting"]["exclusions"][0].pop("exclusion_reason_code")
     assert_invalid(schema, broken)
+
+
+def _exclusion(ref: str, reason: str) -> dict:
+    return {
+        "source_object_ref": ref,
+        "json_pointer": "/mapping/" + ref,
+        "canonical_object_hash": "d" * 64,
+        "exclusion_reason_code": reason,
+        "exclusion_rule_id": "M0-EXC-001",
+        "exclusion_rule_version": "v0.1",
+        "adapter": {"name": "chatgpt_official_export", "version": "0.1.0"},
+        "detail": None,
+    }
+
+
+def _accounting(source: int, preserved: int, excluded: int) -> dict:
+    return {
+        "source_node_count": source,
+        "preserved_node_count": preserved,
+        "excluded_node_count": excluded,
+        "exclusions": [],
+    }
+
+
+def test_h03_accounting_conformance_validator_accepts_conforming():
+    """validate_evidence_accounting returns no violations for a conforming A/P/E."""
+    admitted = ["n1", "n2", "n3"]
+    preserved_nodes = ["n1", "n2"]
+    exclusions = [_exclusion("n3", "explicit_profile_exclusion")]
+    accounting = _accounting(3, 2, 1)
+    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting) == []
+
+
+def test_h03_accounting_rejects_set_mismatch():
+    """P ∪ E != A (missing admitted node) MUST be a violation."""
+    admitted = ["n1", "n2", "n3", "n4"]
+    preserved_nodes = ["n1", "n2"]
+    exclusions = [_exclusion("n3", "explicit_profile_exclusion")]
+    accounting = _accounting(4, 2, 1)
+    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+
+
+def test_h03_accounting_rejects_overlap():
+    """P ∩ E != ∅ (a node both preserved and excluded) MUST be a violation."""
+    admitted = ["n1", "n2"]
+    preserved_nodes = ["n1", "n2"]
+    exclusions = [_exclusion("n2", "explicit_profile_exclusion")]
+    accounting = _accounting(2, 2, 1)
+    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+
+
+def test_h03_accounting_rejects_count_mismatch():
+    """A preserved/excluded count that disagrees with the sets MUST be a violation."""
+    admitted = ["n1", "n2", "n3"]
+    preserved_nodes = ["n1", "n2"]
+    exclusions = [_exclusion("n3", "explicit_profile_exclusion")]
+    accounting = _accounting(3, 1, 1)  # preserved_node_count = 1, actual = 2
+    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+
+
+def test_h03_accounting_rejects_duplicate_preserved():
+    """Duplicate preserved source refs MUST be a violation."""
+    admitted = ["n1", "n2"]
+    preserved_nodes = ["n1", "n1"]
+    exclusions = [_exclusion("n2", "explicit_profile_exclusion")]
+    accounting = _accounting(2, 2, 1)
+    assert validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+
+
+def test_h03_accounting_rejects_forbidden_exclusion_reason():
+    """A structural exclusion reason (e.g. empty_content) MUST be a violation."""
+    admitted = ["n1", "n2"]
+    preserved_nodes = ["n1"]
+    exclusions = [_exclusion("n2", "empty_content")]
+    accounting = _accounting(2, 1, 1)
+    violations = validate_evidence_accounting(admitted, preserved_nodes, exclusions, accounting)
+    assert any("forbidden exclusion reason" in v for v in violations)
+
+
+def test_h03_forbidden_reasons_cover_admission_categories():
+    """The forbidden set MUST cover the §4.2.1 admission categories."""
+    assert FORBIDDEN_EXCLUSION_REASONS >= {
+        "empty_content",
+        "null_message",
+        "unknown_content_type",
+        "alternate_branch",
+        "non_visible_artifact",
+        "unrecognized_metadata",
+    }
 
 
 # --------------------------------------------------------------------------- #

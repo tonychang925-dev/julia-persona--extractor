@@ -41,7 +41,13 @@ def admission_set(mapping: dict) -> set[str]:
 # --------------------------------------------------------------------------- #
 
 def resolve_lineage(mapping: dict, current_node: str | None) -> tuple[str, list[str]]:
-    """Return (resolution_status, node_refs or offending refs)."""
+    """Return (resolution_status, ordered refs).
+
+    Frozen ordering (contract §11 / AF-06):
+
+    - resolved: node_refs = root → current (conversational forward order);
+    - invalid_*: visited_node_refs = current → root (traversal order).
+    """
     if current_node is None or current_node == "":
         return "invalid_missing_current_node", []
     if current_node not in mapping:
@@ -57,7 +63,7 @@ def resolve_lineage(mapping: dict, current_node: str | None) -> tuple[str, list[
         if parent == node_id:
             return "invalid_self_parent", visited + [node_id]
         if parent is None:
-            return "resolved", visited
+            return "resolved", list(reversed(visited))
         if parent not in mapping:
             return "invalid_missing_parent", visited + [parent]
         node_id = parent
@@ -123,7 +129,8 @@ def test_ff02_resolved_lineage_terminates_at_root():
     mapping = {"n3": {"parent": "n2"}, "n2": {"parent": "n1"}, "n1": {"parent": None}}
     status, refs = resolve_lineage(mapping, "n3")
     assert status == "resolved"
-    assert refs == ["n3", "n2", "n1"]
+    # Frozen: node_refs = root → current
+    assert refs == ["n1", "n2", "n3"]
 
 
 def test_ff02_missing_current_node_sea_valid_and_invalid_status():

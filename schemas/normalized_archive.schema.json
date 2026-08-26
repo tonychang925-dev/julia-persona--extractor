@@ -82,6 +82,10 @@
             "enum": ["resolved", "ambiguous", "unbundled", null]
           },
           "bundle_ref": { "type": ["string", "null"] },
+          "bundle_eligibility": {
+            "type": ["string", "null"],
+            "enum": ["eligible", "not_eligible", null]
+          },
           "provenance": { "$ref": "#/$defs/provenance_record" },
           "immutable_ref": {
             "type": "object",
@@ -124,6 +128,21 @@
             "then": {
               "required": ["lineage_ref"],
               "properties": { "lineage_ref": { "type": "string", "minLength": 1 } }
+            }
+          },
+          {
+            "if": {
+              "properties": { "bundle_eligibility": { "const": "eligible" } },
+              "required": ["bundle_eligibility"]
+            },
+            "then": {
+              "required": ["bundle_state"],
+              "properties": {
+                "bundle_state": {
+                  "type": "string",
+                  "enum": ["resolved", "ambiguous", "unbundled"]
+                }
+              }
             }
           }
         ]

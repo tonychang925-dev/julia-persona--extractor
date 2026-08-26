@@ -151,3 +151,61 @@ def bundle_id(
 def canonical_node_hash(source_payload: dict) -> str:
     """``SHA256_HEX(JCS(source_payload))`` — semantic node integrity, not raw bytes."""
     return jcs_hash(source_payload)
+
+
+# --------------------------------------------------------------------------- #
+# Evidence accounting conformance (contract §4.2.1, §10.5, §10.6)
+# --------------------------------------------------------------------------- #
+
+# For the ChatGPT mapping-entry admission profile, none of the structural/content
+# categories below is a valid exclusion reason (§4.2.1: every mapping entry MUST
+# be admitted). An ExclusionRecord using one of these is contract-invalid.
+FORBIDDEN_EXCLUSION_REASONS = frozenset(
+    {
+        "empty_content",
+        "null_message",
+        "unknown_content_type",
+        "alternate_branch",
+        "non_visible_artifact",
+        "unrecognized_metadata",
+    }
+)
+
+
+def validate_evidence_accounting(
+    admitted_refs: list[str],
+    sea_node_source_ids: list[str],
+    exclusions: list[dict],
+    accounting: dict,
+) -> list[str]:
+    """Validate the §10.6 accounting invariants against concrete A/P/E sets.
+
+    Returns a list of violation strings (empty means conforming). This is a
+    test-side conformance validator, not production code.
+    """
+    admitted = set(admitted_refs)
+    preserved = set(sea_node_source_ids)
+    excluded = {ex["source_object_ref"] for ex in exclusions}
+
+    violations: list[str] = []
+    if preserved | excluded != admitted:
+        violations.append("P ∪ E != A")
+    if preserved & excluded:
+        violations.append("P ∩ E != ∅")
+    if len(preserved) + len(excluded) != len(admitted):
+        violations.append("|P| + |E| != |A|")
+    if len(preserved) != len(sea_node_source_ids):
+        violations.append("duplicate preserved source refs")
+    if len(excluded) != len(exclusions):
+        violations.append("duplicate excluded source refs")
+    if accounting.get("preserved_node_count") != len(preserved):
+        violations.append("preserved_node_count mismatch")
+    if accounting.get("excluded_node_count") != len(excluded):
+        violations.append("excluded_node_count mismatch")
+    if accounting.get("source_node_count") != len(admitted):
+        violations.append("source_node_count mismatch")
+    for ex in exclusions:
+        reason = ex.get("exclusion_reason_code")
+        if reason in FORBIDDEN_EXCLUSION_REASONS:
+            violations.append("forbidden exclusion reason: %s" % reason)
+    return violations
