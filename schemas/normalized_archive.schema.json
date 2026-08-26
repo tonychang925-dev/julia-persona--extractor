@@ -2,10 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://julia-persona.org/schemas/normalized_archive.schema.json",
   "title": "Normalized Conversation Archive",
+  "description": "Cross-source normalized projection with mandatory traceability to exact source evidence (M0 §15). Not the raw evidence authority.",
   "type": "object",
   "required": [
     "schema_version",
     "archive_id",
+    "source_evidence_archive_ref",
     "source_identity",
     "provenance",
     "immutability",
@@ -13,8 +15,9 @@
     "messages"
   ],
   "properties": {
-    "schema_version": { "type": "string", "const": "0.2.0" },
+    "schema_version": { "type": "string", "const": "0.3.0" },
     "archive_id": { "type": "string", "minLength": 1 },
+    "source_evidence_archive_ref": { "type": "string", "minLength": 1 },
     "conversation_id": { "type": "string" },
     "title": { "type": ["string", "null"] },
     "created_at": { "type": ["string", "null"], "format": "date-time" },
@@ -61,13 +64,20 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["message_id", "role", "content", "provenance", "immutable_ref"],
+        "required": ["message_id", "role", "content", "provenance", "immutable_ref", "source_evidence_ref"],
         "properties": {
           "message_id": { "type": "string", "minLength": 1 },
           "role": { "type": "string", "minLength": 1 },
           "participant_id": { "type": ["string", "null"] },
           "content": { "type": "string" },
           "timestamp": { "type": ["string", "null"], "format": "date-time" },
+          "source_evidence_ref": { "type": "string", "minLength": 1 },
+          "lineage_ref": { "type": ["string", "null"] },
+          "bundle_state": {
+            "type": ["string", "null"],
+            "enum": ["resolved", "ambiguous", "unbundled", null]
+          },
+          "bundle_ref": { "type": ["string", "null"] },
           "provenance": { "$ref": "#/$defs/provenance_record" },
           "immutable_ref": {
             "type": "object",
@@ -80,7 +90,27 @@
             "additionalProperties": false
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": { "bundle_state": { "const": "resolved" } },
+              "required": ["bundle_state"]
+            },
+            "then": {
+              "properties": { "bundle_ref": { "type": "string", "minLength": 1 } }
+            }
+          },
+          {
+            "if": {
+              "properties": { "bundle_state": { "const": "ambiguous" } },
+              "required": ["bundle_state"]
+            },
+            "then": {
+              "properties": { "bundle_ref": { "type": "string", "minLength": 1 } }
+            }
+          }
+        ]
       }
     }
   },

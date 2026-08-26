@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/canonical_lineage_view.schema.json",
+  "title": "Canonical Lineage View",
+  "description": "Derived structural view over source-native parent ancestry, including deterministic failure semantics (M0 §11).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "resolution_status",
+    "evidence_archive_id",
+    "current_node_id"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "resolution_status": {
+      "type": "string",
+      "enum": [
+        "resolved",
+        "invalid_missing_current_node",
+        "invalid_current_node_not_in_mapping",
+        "invalid_missing_parent",
+        "invalid_cycle",
+        "invalid_self_parent"
+      ]
+    },
+    "evidence_archive_id": { "type": "string", "minLength": 1 },
+    "current_node_id": { "type": ["string", "null"] },
+    "resolution_method": { "type": ["string", "null"] },
+    "resolution_profile": { "type": ["string", "null"] },
+    "lineage_id": {
+      "type": ["string", "null"],
+      "pattern": "^(lineage_[0-9a-f]{64})?$"
+    },
+    "node_refs": { "type": "array", "items": { "type": "string" } },
+    "offending_node_refs": { "type": "array", "items": { "type": "string" } },
+    "offending_parent_refs": { "type": "array", "items": { "type": "string" } },
+    "visited_node_refs": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "resolution_status": { "const": "resolved" } },
+        "required": ["resolution_status"]
+      },
+      "then": {
+        "required": ["lineage_id", "resolution_method", "node_refs"],
+        "properties": {
+          "lineage_id": { "type": "string", "pattern": "^lineage_[0-9a-f]{64}$" },
+          "resolution_method": { "const": "source_native_parent_ancestry" },
+          "current_node_id": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "resolution_status": { "pattern": "^invalid_" }
+        },
+        "required": ["resolution_status"]
+      },
+      "then": {
+        "required": ["offending_node_refs", "offending_parent_refs", "visited_node_refs"]
+      }
+    }
+  ]
+}

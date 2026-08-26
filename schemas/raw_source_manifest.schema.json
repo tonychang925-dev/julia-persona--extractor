@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/raw_source_manifest.schema.json",
+  "title": "Raw Source Manifest",
+  "description": "Byte-level provenance root for one physical source artifact (M0 §7).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "source_archive_id",
+    "source_type",
+    "source_sha256",
+    "adapter"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "source_archive_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^rawsrc_[0-9a-f]{64}$"
+    },
+    "source_type": { "type": "string", "minLength": 1 },
+    "source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_locator": {
+      "type": "object",
+      "required": ["path", "uri"],
+      "properties": {
+        "path": { "type": ["string", "null"] },
+        "uri": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "ingested_at": { "type": ["string", "null"], "format": "date-time" },
+    "adapter": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

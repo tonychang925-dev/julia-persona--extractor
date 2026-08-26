@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/alternate_evidence_view.schema.json",
+  "title": "Alternate Evidence View",
+  "description": "Off-active-lineage source evidence preserved without deletion and without context-authority overclaim (M0 §12).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "evidence_archive_id",
+    "source_node_ref",
+    "lineage_status",
+    "active_context_membership",
+    "historical_exposure"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "evidence_archive_id": { "type": "string", "minLength": 1 },
+    "source_node_ref": { "type": "string", "minLength": 1 },
+    "lineage_status": { "type": "string", "const": "alternate" },
+    "active_context_membership": { "type": "boolean", "const": false },
+    "historical_exposure": {
+      "type": "string",
+      "enum": ["unknown"]
+    }
+  },
+  "additionalProperties": false
+}

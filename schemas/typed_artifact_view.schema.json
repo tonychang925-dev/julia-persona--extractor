@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/typed_artifact_view.schema.json",
+  "title": "Typed Artifact View",
+  "description": "Derived structural view over typed source artifacts; observation only, no interpretation (M0 §13).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_id",
+    "source_node_ref",
+    "source_content_type",
+    "artifact_class",
+    "evidence_class",
+    "payload"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "artifact_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^artifact_[0-9a-f]{64}$"
+    },
+    "source_node_ref": { "type": "string", "minLength": 1 },
+    "source_content_type": { "type": "string", "minLength": 1 },
+    "artifact_class": {
+      "type": "string",
+      "enum": [
+        "exported_decision_trace",
+        "reasoning_execution_metadata",
+        "audio_transcription",
+        "image_asset_pointer",
+        "visible_text",
+        "unknown_typed_artifact"
+      ]
+    },
+    "evidence_class": { "type": "string", "const": "observed_export_artifact" },
+    "payload": { "type": "object" }
+  },
+  "additionalProperties": false
+}

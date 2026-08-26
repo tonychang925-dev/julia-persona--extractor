@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://julia-persona.org/schemas/response_bundle_view.schema.json",
+  "title": "Response Bundle View",
+  "description": "Deterministic structural grouping of one response-emission episode (M0 §14).",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "bundle_state",
+    "evidence_archive_id",
+    "resolution_profile",
+    "trigger_refs",
+    "member_node_refs",
+    "provenance_refs"
+  ],
+  "properties": {
+    "schema_version": { "type": "string", "const": "0.1.0" },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^bundle_[0-9a-f]{64}$"
+    },
+    "bundle_state": {
+      "type": "string",
+      "enum": ["resolved", "ambiguous", "unbundled"]
+    },
+    "evidence_archive_id": { "type": "string", "minLength": 1 },
+    "resolution_profile": {
+      "type": "string",
+      "const": "chatgpt-official-export-response-bundle-v0.1"
+    },
+    "trigger_refs": { "type": "array", "items": { "type": "string" } },
+    "member_node_refs": { "type": "array", "items": { "type": "string" } },
+    "artifact_refs": { "type": "array", "items": { "type": "string" } },
+    "visible_response_refs": { "type": "array", "items": { "type": "string" } },
+    "provenance_refs": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "bundle_state": { "const": "resolved" } },
+        "required": ["bundle_state"]
+      },
+      "then": {
+        "required": ["member_node_refs"],
+        "properties": {
+          "member_node_refs": { "type": "array", "minItems": 1 }
+        }
+      }
+    }
+  ]
+}
