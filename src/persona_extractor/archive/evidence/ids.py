@@ -113,3 +113,22 @@ def bundle_id(
             "ordered_member_node_refs": ordered_member_node_refs,
         },
     )
+
+
+def artifact_id(
+    evidence_archive_id: str,
+    source_node_ref: str,
+    source_artifact_pointer: str,
+    artifact_profile: str,
+) -> str:
+    """``artifact_ + ...`` (§13.1)."""
+    return _derive(
+        "artifact_",
+        "TYPED-ARTIFACT-ID-v1",
+        {
+            "evidence_archive_id": evidence_archive_id,
+            "source_node_ref": source_node_ref,
+            "source_artifact_pointer": source_artifact_pointer,
+            "artifact_profile": artifact_profile,
+        },
+    )
