@@ -1,11 +1,16 @@
 """M0 contract-conformance primitives.
 
-These are reference implementations of the normative hash/canonicalization/ID
-algorithms in the M0 Evidence Substrate contract (R0.1-FREEZE-FIX):
+Reference implementations of the normative hash/canonicalization/ID algorithms
+in the M0 Evidence Substrate contract (R0.1-FREEZE-FIX):
 
   - RFC 8785 JSON Canonicalization Scheme (JCS) serialization
   - SHA-256 hex digests
   - domain-separated logical ID derivation
+
+Canonical JSON serialization is delegated to the ``jcs`` package, a known RFC 8785
+conformant implementation. This means number serialization follows ECMAScript
+semantics (e.g. ``1e-6`` -> ``"0.000001"``, ``-0.0`` -> ``"0"``) rather than a
+hand-rolled approximation of ``repr``.
 
 This module lives under ``tests/contracts/`` as test infrastructure. It is NOT
 the production evidence-substrate implementation and MUST NOT be imported by
@@ -16,92 +21,13 @@ and invariants machine-reproducibly.
 from __future__ import annotations
 
 import hashlib
-import math
 
-# --------------------------------------------------------------------------- #
-# Canonical JSON (RFC 8785 JCS)
-# --------------------------------------------------------------------------- #
-
-_ESCAPE_MAP = {
-    '"': '\\"',
-    "\\": "\\\\",
-    "\b": "\\b",
-    "\t": "\\t",
-    "\n": "\\n",
-    "\f": "\\f",
-    "\r": "\\r",
-}
-
-
-def _escape_string(value: str) -> str:
-    """RFC 8785 string serialization: escape `"`, `\\`, and control chars."""
-    out: list[str] = []
-    for ch in value:
-        if ch in _ESCAPE_MAP:
-            out.append(_ESCAPE_MAP[ch])
-        else:
-            cp = ord(ch)
-            if cp < 0x20:
-                out.append("\\u%04x" % cp)
-            else:
-                out.append(ch)
-    return "".join(out)
-
-
-def _number_to_jcs(value: int | float) -> str:
-    """Serialize a number with ECMAScript-style JSON number semantics.
-
-    Differences from Python ``repr`` that this reference handles:
-
-    - integral floats collapse to integer form (``1.0`` -> ``"1"``);
-    - exponent leading zeros are removed (``1e-07`` -> ``"1e-7"``).
-
-    This is a contract-conformance reference, not a byte-for-byte reimplementation
-    of ECMAScript Number::toString for every possible double. Conformance is
-    proven against the frozen hard-coded vectors in the test suite, not by this
-    function asserting about itself.
-    """
-    if isinstance(value, bool):
-        # bool is a subclass of int; guard explicitly (JSON has no bool-number).
-        return "true" if value else "false"
-    if isinstance(value, int):
-        return str(value)
-    if isinstance(value, float):
-        if math.isnan(value) or math.isinf(value):
-            raise ValueError("NaN/Infinity cannot be canonically serialized")
-        if value.is_integer():
-            return str(int(value))
-        text = repr(value)
-        if "e" in text or "E" in text:
-            mantissa, exponent = text.lower().split("e", 1)
-            sign = ""
-            if exponent[:1] in ("+", "-"):
-                sign = exponent[0]
-                exponent = exponent[1:]
-            exponent = exponent.lstrip("0") or "0"
-            text = mantissa + "e" + sign + exponent
-        return text
-    raise TypeError("unsupported number type: %r" % type(value))
+import jcs
 
 
 def canonicalize(value: object) -> str:
-    """Return the RFC 8785 JCS canonical serialization of a JSON value."""
-    if value is None:
-        return "null"
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    if isinstance(value, (int, float)):
-        return _number_to_jcs(value)
-    if isinstance(value, str):
-        return '"' + _escape_string(value) + '"'
-    if isinstance(value, (list, tuple)):
-        return "[" + ",".join(canonicalize(item) for item in value) + "]"
-    if isinstance(value, dict):
-        items = sorted(value.items(), key=lambda kv: kv[0])
-        return "{" + ",".join(
-            '"' + _escape_string(k) + '":' + canonicalize(v) for k, v in items
-        ) + "}"
-    raise TypeError("unsupported canonicalization type: %r" % type(value))
+    """Return the RFC 8785 JCS canonical serialization as a UTF-8 string."""
+    return jcs.canonicalize(value).decode("utf-8")
 
 
 # --------------------------------------------------------------------------- #
@@ -114,8 +40,8 @@ def sha256_hex(value: str) -> str:
 
 
 def jcs_hash(value: object) -> str:
-    """``SHA256_HEX(JCS(value))``."""
-    return sha256_hex(canonicalize(value))
+    """``SHA256_HEX(JCS(value))`` — hash over the canonical UTF-8 bytes directly."""
+    return hashlib.sha256(jcs.canonicalize(value)).hexdigest()
 
 
 # --------------------------------------------------------------------------- #

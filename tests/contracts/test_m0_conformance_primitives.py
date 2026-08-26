@@ -60,6 +60,12 @@ RFC8785_VECTORS = [
     ({"n": 1e-7}, '{"n":1e-7}', "747d6d23b64d1b2d579adb832b44de31c91c875bbef7a8e397f5d183a746b54b"),
     ({"s": 'a"b'}, '{"s":"a\\"b"}', "710dbb3ed82221651ba402bf2db94826c9f31dbc9c7ee7c46510425dd7af991b"),
     ({"s": "a\nb"}, '{"s":"a\\nb"}', "539d05783bcaa18932974451c64e9489fa08792d632859fd746379bbec1d8db7"),
+    # RFC 8785 Appendix B number-serialization boundaries.
+    ({"n": 1e-6}, '{"n":0.000001}', "28343867a0be00aee19f81aa90cfd6c646878b9303fa15410d16bfd3f8894578"),
+    ({"n": -0.0}, '{"n":0}', "f3013f933b9fb80ab6d995e7ad9da36f683837ba1d81e950c943d40111eac2f0"),
+    ({"n": 1e21}, '{"n":1e+21}', "f1ee2b60ee95a3170fdc07a577e5f3514ced26867443d69da265acadead81007"),
+    ({"n": 9.999999999999997e-7}, '{"n":9.999999999999997e-7}', "ea0486d765f0e78e3cfd35b0da15c67c6c5f7aefde4dd5bc17ad8b8e95880a1f"),
+    ({"n": 333333333.33333329}, '{"n":333333333.3333333}', "8e1aa496328ac7acbd045b34464ae11d72d8b525c355b85099382ffcb499143b"),
 ]
 
 

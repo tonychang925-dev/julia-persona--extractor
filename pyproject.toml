@@ -14,7 +14,7 @@ keywords = ["persona", "evidence", "causal-experience", "continuity", "archive-n
 dependencies = ["jsonschema>=4.22.0"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0.0", "ruff>=0.5.0"]
+dev = ["pytest>=8.0.0", "ruff>=0.5.0", "jcs>=0.2.1"]
 
 [project.scripts]
 persona-extractor = "persona_extractor.cli:main"
