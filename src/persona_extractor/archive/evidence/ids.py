@@ -132,3 +132,33 @@ def artifact_id(
             "artifact_profile": artifact_profile,
         },
     )
+
+
+def normalized_archive_id(
+    evidence_archive_id: str,
+    normalization_profile: str,
+) -> str:
+    """``norm_ + ...`` (§15.5)."""
+    return _derive(
+        "norm_",
+        "NORMALIZED-ARCHIVE-ID-v1",
+        {
+            "evidence_archive_id": evidence_archive_id,
+            "normalization_profile": normalization_profile,
+        },
+    )
+
+
+def normalized_message_id(
+    archive_id: str,
+    source_evidence_ref: str,
+) -> str:
+    """``normmsg_ + ...`` (§15.5)."""
+    return _derive(
+        "normmsg_",
+        "NORMALIZED-MESSAGE-ID-v1",
+        {
+            "archive_id": archive_id,
+            "source_evidence_ref": source_evidence_ref,
+        },
+    )
