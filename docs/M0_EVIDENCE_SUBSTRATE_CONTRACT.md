@@ -1920,6 +1920,245 @@ Such simplification MUST NOT overwrite or mutate SEA.
 
 Any information omitted from the normalized projection MUST remain recoverable from `source_evidence_ref`.
 
+## 15.5 ChatGPT Official Export Normalized Projection Profile v0.3
+
+This is a **faithful deterministic projection**, not an interpretation, reconstruction,
+or guessing step. It has no new fact-discovery authority.
+
+Profile identifier:
+
+```text
+chatgpt-official-export-normalized-archive-v0.3
+```
+
+Builder API:
+
+```text
+build_chatgpt_normalized_archive(manifest, sea, canonical_lineage, response_bundles) -> dict
+```
+
+Input authority boundaries:
+
+```text
+manifest           = source identity / locator / ingested_at / source_sha256 authority
+SEA                = content / source evidence authority
+CanonicalLineage   = membership / order authority
+ResponseBundle     = bundle association authority
+```
+
+P5 MUST NOT re-read raw bytes to derive source identity or timestamps.
+
+### Message projection scope (canonical-only)
+
+`messages[]` is the projection of canonical-lineage nodes whose
+`source_payload.message` is a `dict`, in canonical root → current order.
+
+```text
+projected  : message is a dict
+omitted    : message = null            (structural node)
+omitted    : malformed non-dict message
+omitted    : alternate nodes
+```
+
+Alternate nodes MUST NOT be flattened into `messages[]` — P2 proved only that they
+are off-lineage, not where they sit in a flat chronology. No fabricated
+branch-to-flat ordering. They remain fully preserved in SEA + AlternateEvidenceView.
+
+### Content textual projection (narrow text projection)
+
+Authority is `source_payload.message.content` (NOT `structural_projection`). The
+normalized `content` field is a **narrow textual projection**, not a lossless
+JSON/`str()` stringification of structured evidence.
+
+```text
+content_type == "text"
+    parts is a list  -> join the string elements, in order, with "\n"
+                        (no strip, no str(obj), no JSON dump;
+                         empty strings are preserved verbatim)
+    otherwise        -> ""
+
+content_type == "multimodal_text"
+    walk parts in numeric order:
+        plain string                          -> keep verbatim
+        dict, content_type == "audio_transcription", text is string -> keep text
+        everything else (image_asset_pointer, unknown, number, bool,
+                          null, array)         -> skip
+    join kept fragments with "\n"
+
+content_type == "audio_transcription" (top-level)
+    content.text is string -> that string
+    otherwise              -> ""
+
+content_type in {thoughts, reasoning_recap, image_asset_pointer}
+    -> ""
+
+missing content_type / unknown content_type / malformed content
+    -> ""
+```
+
+`thoughts` (→ `exported_decision_trace`) and `reasoning_recap`
+(→ `reasoning_execution_metadata`) MUST NOT be re-stringified into visible
+conversational text. P3 remains the typed structural evidence view.
+TypedArtifactView is NOT the normalized-content authority; the P5 builder does
+not consume typed_artifacts as an input.
+
+### Role rules
+
+```text
+author.role is a non-empty string -> use verbatim
+missing / null / non-string / empty -> "unknown"
+```
+
+No alias normalization (`developer → system`, `tool → assistant`), no casefolding.
+
+### Participant rules (role buckets)
+
+```text
+participant_id = "role:" + normalized_role
+role           = normalized_role
+display_name   = null
+```
+
+Participants are ordered by first appearance of each role across canonical
+normalized messages. This is a source-role bucket, NOT a person-identity claim.
+
+### Timestamp rules
+
+Read `source_payload.message.create_time` (NOT `structural_projection`).
+
+```text
+finite int/float (not bool) -> Unix epoch seconds -> UTC RFC3339
+                               "YYYY-MM-DDTHH:MM:SS.ffffffZ" (fixed 6-digit microseconds)
+null / NaN / Inf / string / bool / out-of-range -> null (no error, no guess)
+```
+
+Archive-level `created_at` / `updated_at` are `null` (conversation-level timestamps
+are not preserved in the current SEA envelope; P5 does not re-read raw bytes).
+
+### Traceability IDs (reuse upstream frozen IDs)
+
+```text
+source_evidence_archive_ref = sea.evidence_archive_id
+source_evidence_ref (msg)   = SEA node.node_evidence_id   (NOT source_node_id)
+lineage_ref                 = canonical_lineage.lineage_id
+bundle_ref                  = ResponseBundleView.bundle_id
+```
+
+### ID formulas (new normalized logical-ID domains)
+
+```text
+archive_id = "norm_" + SHA256_HEX(JCS({
+  "domain": "NORMALIZED-ARCHIVE-ID-v1",
+  "payload": {
+    "evidence_archive_id": evidence_archive_id,
+    "normalization_profile": "chatgpt-official-export-normalized-archive-v0.3",
+  },
+}))
+
+message_id = "normmsg_" + SHA256_HEX(JCS({
+  "domain": "NORMALIZED-MESSAGE-ID-v1",
+  "payload": {
+    "archive_id": archive_id,
+    "source_evidence_ref": node_evidence_id,
+  },
+}))
+```
+
+Neither formula includes timestamp, content, role, filesystem path, ingestion
+time, adapter runtime, or any UUID.
+
+### Hash formulas
+
+```text
+raw_content_hash = manifest.source_sha256
+
+message_hash = SHA256_HEX(JCS({
+  "domain": "NORMALIZED-MESSAGE-HASH-v1",
+  "payload": {
+    "normalization_profile": normalization_profile,
+    "message_id": message_id,
+    "role": role,
+    "participant_id": participant_id,
+    "content": content,
+    "timestamp": timestamp,
+    "source_evidence_ref": source_evidence_ref,
+    "lineage_ref": lineage_ref,
+    "lineage_state": lineage_state,
+    "bundle_state": bundle_state,
+    "bundle_ref": bundle_ref,
+    "bundle_eligibility": bundle_eligibility,
+    "raw_message_id": raw_message_id,
+  },
+}))
+
+normalized_content_hash = SHA256_HEX(JCS({
+  "domain": "NORMALIZED-CONTENT-HASH-v1",
+  "payload": {
+    "normalization_profile": normalization_profile,
+    "archive_id": archive_id,
+    "source_evidence_archive_ref": source_evidence_archive_ref,
+    "conversation_id": conversation_id,
+    "title": title,
+    "created_at": created_at,
+    "updated_at": updated_at,
+    "participants": participants,
+    "ordered_message_hashes": ordered_message_hashes,
+  },
+}))
+```
+
+`message_hash` excludes `source_path` / `source_uri` / `ingested_at`;
+`normalized_content_hash` excludes filesystem path / URI / ingestion timestamp.
+Relocating the exact source + same profile MUST NOT change logical identity.
+
+### Bundle projection
+
+Build `source_node_ref → bundle` (P4 conservation guarantees each eligible
+canonical assistant message-bearing node maps to exactly one bundle).
+
+```text
+assistant member:
+    bundle_eligibility = "eligible"
+    bundle_state       = bundle.bundle_state   (resolved | ambiguous)
+    bundle_ref         = bundle.bundle_id
+non-assistant (user / system / tool / unknown):
+    bundle_eligibility = "not_eligible"
+    bundle_state       = null
+    bundle_ref         = null
+```
+
+v0.1 never produces `unbundled`. FAIL CLOSED if a canonical assistant message has
+no bundle or more than one bundle, or if a bundle member points at a canonical
+user / system node. P5 MUST NOT recompute or invent bundle association.
+
+### source_identity / provenance mapping
+
+```text
+source_identity.source_type = manifest.source_type
+source_identity.source_id   = sea.source_native.conversation_id
+source_identity.source_path = manifest.source_locator.path
+source_identity.source_uri  = manifest.source_locator.uri
+source_identity.ingested_at = manifest.ingested_at   (may be null)
+source_identity.content_hash = manifest.source_sha256
+```
+
+Unknown ingestion time MUST remain `null` — never synthesized.
+
+### immutability
+
+```text
+normalization_adapter  = "chatgpt_official_export"
+normalization_version  = "0.3.0"
+raw_content_hash       = manifest.source_sha256
+normalized_content_hash = <NORMALIZED-CONTENT-HASH-v1>
+```
+
+### No fabricated semantics
+
+P5 MUST NOT emit causal / persona / identity / runtime-authority fields, and MUST
+NOT flatten structured artifacts into normalized text as if they were visible
+dialogue.
+
 ---
 
 # 16. M1 Compatibility Amendment
