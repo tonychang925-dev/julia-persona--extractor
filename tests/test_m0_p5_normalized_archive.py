@@ -577,6 +577,52 @@ def test_s47_no_causal_persona_identity_fields():
 
 
 # --------------------------------------------------------------------------- #
+# S48-S51 — R1 closure (huge-int timestamp + provenance behavior)
+# --------------------------------------------------------------------------- #
+
+def test_s48_huge_finite_int_timestamp_projects_to_null():
+    manifest = _manifest()
+    cases = [10**1000, -(10**1000), 10**19]
+    for i, ct in enumerate(cases):
+        node = _node("a%d" % i, _msg("assistant", _content("text", parts=["x"]), create_time=ct))
+        arc = build_chatgpt_normalized_archive(manifest, _sea([node]), _canonical(["a%d" % i]), [_bundle(["a%d" % i], bid="bundle_" + ("%064x" % i))])
+        assert arc["messages"][0]["timestamp"] is None
+
+
+def test_s49_archive_provenance_mapping():
+    manifest, sea, canonical, bundles = _simple()
+    arc = build_chatgpt_normalized_archive(manifest, sea, canonical, bundles)
+    p = arc["provenance"]
+    assert p["source_id"] == "conv1"  # conversation_id, not source_node_id
+    assert p["source_offset"] is None
+    assert p["raw_message_id"] is None
+    assert p["source_type"] == "chatgpt_official_export"
+    assert p["source_path"] == "/tmp/x.json"
+    assert p["source_uri"] is None
+
+
+def test_s50_message_provenance_mapping():
+    manifest, sea, canonical, bundles = _simple()
+    arc = build_chatgpt_normalized_archive(manifest, sea, canonical, bundles)
+    m = arc["messages"][1]  # assistant a1
+    p = m["provenance"]
+    assert p["source_id"] == "a1"  # source_node_id, not conversation_id
+    assert p["source_offset"] is None
+    assert p["raw_message_id"] == "msg_a"  # source message.id
+    assert m["immutable_ref"]["raw_message_id"] == p["raw_message_id"]
+
+
+def test_s51_normalization_adapter_version_exact():
+    manifest, sea, canonical, bundles = _simple()
+    arc = build_chatgpt_normalized_archive(manifest, sea, canonical, bundles)
+    assert arc["provenance"]["normalization_adapter"] == "chatgpt_official_export_normalizer"
+    assert arc["provenance"]["normalization_version"] == "0.3.0"
+    assert arc["immutability"]["normalization_adapter"] == "chatgpt_official_export_normalizer"
+    assert arc["immutability"]["normalization_version"] == "0.3.0"
+    assert arc["messages"][0]["provenance"]["normalization_adapter"] == "chatgpt_official_export_normalizer"
+
+
+# --------------------------------------------------------------------------- #
 # Golden private acceptance (only when GOLDEN_MIRA_FIXTURE_PATH is set)
 # --------------------------------------------------------------------------- #
 
@@ -612,5 +658,18 @@ def test_golden_private_acceptance_frozen_hard_values():
     canonical_ids = set(canonical["node_refs"])
     for m in arc["messages"]:
         assert m["provenance"]["source_id"] in canonical_ids
+
+    # Frozen P5 Golden signature (exact).
+    assert arc["archive_id"] == "norm_ad478095fc8985d8e0433f3dc0b3c984cc0471e7463f3694e4590b6a9d727dd3"
+    assert arc["immutability"]["normalized_content_hash"] == "c2a94f0250b8aa4dcf2bf58ecb76204a1ef84f482f5ac27b54b6cb3b8d5b1960"
+    role_counts: dict[str, int] = {}
+    for m in arc["messages"]:
+        role_counts[m["role"]] = role_counts.get(m["role"], 0) + 1
+    assert role_counts == {"user": 1521, "assistant": 2504}
+    assert [p["participant_id"] for p in arc["participants"]] == ["role:user", "role:assistant"]
+    assert sum(1 for m in arc["messages"] if m["bundle_state"] == "resolved") == 2390
+    assert sum(1 for m in arc["messages"] if m["bundle_state"] == "ambiguous") == 114
+    assert sum(1 for m in arc["messages"] if m["content"] != "") == 3016
+    assert sum(1 for m in arc["messages"] if m["content"] == "") == 1009
 
     _validate(arc)

@@ -295,15 +295,19 @@ def _project_timestamp(message: dict[str, Any]) -> str | None:
     create_time = message.get("create_time")
     if isinstance(create_time, bool):
         return None
-    if isinstance(create_time, (int, float)):
+    if isinstance(create_time, float):
         if not math.isfinite(create_time):
             return None
-        try:
-            dt = datetime.datetime.fromtimestamp(create_time, tz=datetime.timezone.utc)
-        except (OverflowError, OSError, ValueError):
-            return None
-        return dt.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-    return None
+    elif not isinstance(create_time, int):
+        return None
+    # NOTE: do NOT run math.isfinite() on an arbitrary-precision int — the
+    # implicit int->float conversion raises OverflowError for huge ints. Let
+    # fromtimestamp raise (OverflowError/OSError/ValueError) instead -> null.
+    try:
+        dt = datetime.datetime.fromtimestamp(create_time, tz=datetime.timezone.utc)
+    except (OverflowError, OSError, ValueError):
+        return None
+    return dt.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 def _raw_message_id(message: dict[str, Any]) -> str | None:
