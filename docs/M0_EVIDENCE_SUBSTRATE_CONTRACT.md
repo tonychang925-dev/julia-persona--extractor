@@ -2131,7 +2131,7 @@ v0.1 never produces `unbundled`. FAIL CLOSED if a canonical assistant message ha
 no bundle or more than one bundle, or if a bundle member points at a canonical
 user / system node. P5 MUST NOT recompute or invent bundle association.
 
-### source_identity / provenance mapping
+### source_identity mapping
 
 ```text
 source_identity.source_type = manifest.source_type
@@ -2144,11 +2144,75 @@ source_identity.content_hash = manifest.source_sha256
 
 Unknown ingestion time MUST remain `null` — never synthesized.
 
+### Normalizer component identity
+
+```text
+NORMALIZATION_ADAPTER = "chatgpt_official_export_normalizer"
+NORMALIZATION_VERSION = "0.3.0"
+```
+
+These are distinct from the source ingestion adapter
+(`chatgpt_official_export` / `0.1.0`). `normalization_adapter` names the
+projection component, not the ingestion component.
+
+### Archive provenance mapping
+
+```text
+archive.provenance.source_type      = manifest.source_type
+archive.provenance.source_path      = manifest.source_locator.path
+archive.provenance.source_uri       = manifest.source_locator.uri
+archive.provenance.source_id        = sea.source_native.conversation_id
+archive.provenance.source_offset    = null
+archive.provenance.raw_message_id   = null
+archive.provenance.normalization_adapter  = NORMALIZATION_ADAPTER
+archive.provenance.normalization_version  = NORMALIZATION_VERSION
+```
+
+`source_offset` is `null`: the M0 evidence chain has no trusted conversation
+byte/source ordinal offset, and a canonical index is NOT a source-native offset.
+
+### Message provenance mapping
+
+```text
+message.provenance.source_type      = manifest.source_type
+message.provenance.source_path      = manifest.source_locator.path
+message.provenance.source_uri       = manifest.source_locator.uri
+message.provenance.source_id        = SEA node.source_node_id
+message.provenance.source_offset    = null
+message.provenance.raw_message_id   = raw_message_id
+message.provenance.normalization_adapter  = NORMALIZATION_ADAPTER
+message.provenance.normalization_version  = NORMALIZATION_VERSION
+```
+
+`source_id` is `source_node_id` (the source-native node identity), NOT the
+conversation id — archive provenance already owns conversation-level identity,
+and `source_evidence_ref` (`node_evidence_id`) owns forensic evidence identity.
+These namespaces MUST NOT be conflated.
+
+### raw_message_id
+
+```text
+raw_message_id = source_payload.message.id   if non-empty string
+                 else null
+```
+
+MUST NOT fallback to `source_node_id` (that is the mapping-key namespace, not the
+source message ID). Both `message.provenance.raw_message_id` and
+`message.immutable_ref.raw_message_id` use this exact value.
+
+### immutable_ref
+
+```text
+immutable_ref.archive_id     = archive_id
+immutable_ref.message_hash   = <NORMALIZED-MESSAGE-HASH-v1 result>
+immutable_ref.raw_message_id = raw_message_id
+```
+
 ### immutability
 
 ```text
-normalization_adapter  = "chatgpt_official_export"
-normalization_version  = "0.3.0"
+normalization_adapter  = NORMALIZATION_ADAPTER
+normalization_version  = NORMALIZATION_VERSION
 raw_content_hash       = manifest.source_sha256
 normalized_content_hash = <NORMALIZED-CONTENT-HASH-v1>
 ```

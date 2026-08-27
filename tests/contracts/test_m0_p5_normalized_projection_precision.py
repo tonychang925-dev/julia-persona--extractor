@@ -199,3 +199,31 @@ def test_c16_hash_formulas_frozen():
 def test_c17_unknown_ingestion_time_must_remain_null():
     c = _contract()
     assert "Unknown ingestion time MUST remain `null`" in c
+
+
+def test_c18_archive_provenance_mapping_frozen():
+    c = _contract()
+    assert "### Archive provenance mapping" in c
+    assert "archive.provenance.source_id        = sea.source_native.conversation_id" in c
+    assert "archive.provenance.source_offset    = null" in c
+
+
+def test_c19_message_provenance_mapping_frozen():
+    c = _contract()
+    assert "### Message provenance mapping" in c
+    assert "message.provenance.source_id        = SEA node.source_node_id" in c
+    assert "message.provenance.source_offset    = null" in c
+
+
+def test_c20_raw_message_id_and_immutable_ref_frozen():
+    c = _contract()
+    assert "raw_message_id = source_payload.message.id" in c
+    assert "MUST NOT fallback to `source_node_id`" in c
+    assert "immutable_ref.raw_message_id = raw_message_id" in c
+    assert "immutable_ref.message_hash   = <NORMALIZED-MESSAGE-HASH-v1 result>" in c
+
+
+def test_c21_normalization_adapter_component_name():
+    c = _contract()
+    assert 'NORMALIZATION_ADAPTER = "chatgpt_official_export_normalizer"' in c
+    assert 'NORMALIZATION_VERSION = "0.3.0"' in c
