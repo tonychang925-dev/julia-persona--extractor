@@ -611,6 +611,15 @@ def test_s50_message_provenance_mapping():
     assert p["raw_message_id"] == "msg_a"  # source message.id
     assert m["immutable_ref"]["raw_message_id"] == p["raw_message_id"]
 
+    # null path: no source message.id -> both raw_message_id fields null,
+    # and never fall back to source_node_id.
+    node = _node("a2", _msg("assistant", _content("text", parts=["x"])))
+    arc2 = build_chatgpt_normalized_archive(manifest, _sea([node]), _canonical(["a2"]), [_bundle(["a2"], bid="bundle_" + "e" * 64)])
+    m2 = arc2["messages"][0]
+    assert m2["provenance"]["raw_message_id"] is None
+    assert m2["immutable_ref"]["raw_message_id"] is None
+    assert m2["provenance"]["raw_message_id"] != m2["provenance"]["source_id"]
+
 
 def test_s51_normalization_adapter_version_exact():
     manifest, sea, canonical, bundles = _simple()
@@ -620,6 +629,7 @@ def test_s51_normalization_adapter_version_exact():
     assert arc["immutability"]["normalization_adapter"] == "chatgpt_official_export_normalizer"
     assert arc["immutability"]["normalization_version"] == "0.3.0"
     assert arc["messages"][0]["provenance"]["normalization_adapter"] == "chatgpt_official_export_normalizer"
+    assert arc["messages"][0]["provenance"]["normalization_version"] == "0.3.0"
 
 
 # --------------------------------------------------------------------------- #
