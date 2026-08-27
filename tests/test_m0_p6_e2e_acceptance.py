@@ -130,15 +130,27 @@ def test_e2e_reference_consistency():
     assert all(b["evidence_archive_id"] == sea_id for b in bundles)
     assert archive["source_evidence_archive_ref"] == sea_id
 
-    # message-level binding: lineage_ref -> canonical lineage, source_evidence_ref
-    # -> a real SEA node evidence id, bundle_ref -> a real P4 bundle id.
-    node_evidence_ids = {n["node_evidence_id"] for n in sea["nodes"]}
-    bundle_ids = {b["bundle_id"] for b in bundles}
+    # message-level exact binding: each message's refs point at exactly its own
+    # corresponding SEA node and P4 bundle — not merely some legal object.
+    nodes_by_id = {n["source_node_id"]: n for n in sea["nodes"]}
+    bundles_by_id = {b["bundle_id"]: b for b in bundles}
     for m in archive["messages"]:
+        source_node_id = m["provenance"]["source_id"]
+        node = nodes_by_id[source_node_id]
+        assert m["source_evidence_ref"] == node["node_evidence_id"]
         assert m["lineage_ref"] == canonical["lineage_id"]
-        assert m["source_evidence_ref"] in node_evidence_ids
-        if m["bundle_ref"] is not None:
-            assert m["bundle_ref"] in bundle_ids
+        if m["bundle_ref"] is None:
+            assert m["bundle_eligibility"] == "not_eligible"
+            assert m["bundle_state"] is None
+        else:
+            bundle = bundles_by_id[m["bundle_ref"]]
+            assert source_node_id in bundle["member_node_refs"]
+            assert m["bundle_state"] == bundle["bundle_state"]
+            assert m["bundle_eligibility"] == "eligible"
+
+    # final-chain reference resolution: every artifact's source_node_ref exists.
+    for artifact in artifacts:
+        assert artifact["source_node_ref"] in nodes_by_id
 
 
 # --------------------------------------------------------------------------- #
