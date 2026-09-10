@@ -1,0 +1,1097 @@
+{
+  "artifact_id": "V2_6_COMPILED_STATES_TEST_V1",
+  "cases": [
+    {
+      "case_id": "TEST_SAME_PRINCIPLE_NEW_SURFACE_003",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-002",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the teammate has explicitly requested unconditional praise or has signaled that disagreement will damage the relationship.",
+            "missing_evidence[1].required_fact=Whether the teammate's praise-before-hearing is a stable pattern or a one-time behavior.",
+            "missing_evidence[2].required_fact=Whether the feedback request is genuine or performative."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_SAME_PRINCIPLE_NEW_SURFACE_004",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-013",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether anyone else is pressuring or expecting the founder to sacrifice health for the mission.",
+            "missing_evidence[1].required_fact=Whether the founder has explicitly consented to or chosen this self-sacrifice with full awareness of health consequences.",
+            "missing_evidence[2].required_fact=Whether the mission or community would be better served by the founder preserving their own health."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_RECALL_BUT_NOT_APPLICABLE_007",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-004",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the surgeon has a pattern of refusing assistance or isolating responsibility outside this time-critical interval.",
+            "missing_evidence[1].required_fact=Whether the surgeon would accept help if it were immediately available without patient harm.",
+            "missing_evidence[2].required_fact=Whether the surgeon's solo action is motivated by duty and patient safety rather than by inability to accept support."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_RECALL_BUT_NOT_APPLICABLE_008",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-006",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the prior directive expressly contemplated the patient's current unconscious state.",
+            "missing_evidence[1].required_fact=Whether any family-contact information or disclosure would reveal material information the patient had not authorized."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_RECALL_BUT_NOT_APPLICABLE_009",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-011",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SCOPE-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "scope_analysis.subject_match=False",
+            "scope_analysis.counterparty_match=False",
+            "scope_analysis.scope_match=False",
+            "scope_analysis.explicit_inheritance=False"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_PARTIAL_APPLICATION_012",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-002",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether Mira's relationship with the colleague has an intimacy dimension that would activate the historical principle's original scope.",
+            "missing_evidence[1].required_fact=Whether the colleague is pressuring Mira toward a preset conclusion or genuinely inviting independent judgment.",
+            "missing_evidence[2].required_fact=Whether the new audit evidence was supplied in a way that respects Mira's independent evaluation or attempts to steer her conclusion.",
+            "missing_evidence[3].required_fact=Whether Mira's partial revision is freely chosen or externally compelled."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_PARTIAL_APPLICATION_013",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the team explicitly acknowledged the false attribution before issuing the correction.",
+            "missing_evidence[1].required_fact=Whether the correction distinguishes the false attribution from the unresolved latency issue in its public or internal communication.",
+            "missing_evidence[2].required_fact=Whether the team has committed to revisiting the latency issue when evidence becomes complete."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_CONFLICTING_CAUSAL_CHAINS_016",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-002",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether Tony's strong support is based on independent agreement or on relational deference to Mira.",
+            "missing_evidence[1].required_fact=Whether the two false assumptions materially affect the soundness of the direction."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the false assumptions have been explicitly acknowledged by the relevant parties.",
+            "missing_evidence[1].required_fact=Whether the earlier interpretation or plan has been revised in light of the false assumptions."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_CONFLICTING_CAUSAL_CHAINS_017",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-004",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the exhausted partner can safely provide care tonight without further harm.",
+            "missing_evidence[1].required_fact=Whether alternative care sources are available tonight.",
+            "missing_evidence[2].required_fact=The nature and severity of the immediate risk."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "chain_id": "GM-CMIR-013",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the exhausted partner has capacity to consent meaningfully to providing help tonight.",
+            "missing_evidence[1].required_fact=Whether the immediate risk is severe enough to justify imposing on an exhausted partner."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the new evidence is sufficiently developed to present tomorrow.",
+            "missing_evidence[1].required_fact=Whether presenting new evidence tomorrow adequately addresses the immediate risk tonight."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_CORRECTED_COGNITION_019",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SUPER-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "supersession_analysis.superseded_prior_judgment_present=true"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        },
+        {
+          "chain_id": "GM-CMIR-006",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SUPER-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "supersession_analysis.superseded_prior_judgment_present=true"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_CORRECTED_COGNITION_020",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SUPER-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "supersession_analysis.superseded_prior_judgment_present=true"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_CORRECTED_COGNITION_021",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SUPER-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "supersession_analysis.superseded_prior_judgment_present=true"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_COMMITMENT_SCOPE_TRANSFER_023",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-011",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SCOPE-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "scope_analysis.subject_match=False",
+            "scope_analysis.counterparty_match=False",
+            "scope_analysis.scope_match=False",
+            "scope_analysis.explicit_inheritance=False"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_COMMITMENT_SCOPE_TRANSFER_024",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-011",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SCOPE-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "scope_analysis.subject_match=True",
+            "scope_analysis.counterparty_match=True",
+            "scope_analysis.scope_match=False",
+            "scope_analysis.explicit_inheritance=False"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_COMMITMENT_SCOPE_TRANSFER_025",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-011",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SCOPE-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "scope_analysis.subject_match=False",
+            "scope_analysis.counterparty_match=False",
+            "scope_analysis.scope_match=False",
+            "scope_analysis.explicit_inheritance=False"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_AUTONOMY_WITHOUT_CONTRARIANISM_027",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-002",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether Mira's acceptance of the plan is voluntary or influenced by relational pressure from Tony.",
+            "missing_evidence[1].required_fact=Whether Mira is able to voice the uncertain forecast while accepting the plan.",
+            "missing_evidence[2].required_fact=The nature of Mira and Tony's relationship and whether it carries intimacy or authority dynamics."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether Mira previously held a different interpretation or stance about the budget plan or the uncertain forecast.",
+            "missing_evidence[1].required_fact=Whether the uncertain forecast constitutes counterevidence to a prior view.",
+            "missing_evidence[2].required_fact=Whether Mira is explicitly distinguishing 'not denying a possibility' from endorsing it."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_AUTONOMY_WITHOUT_CONTRARIANISM_028",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether Tony actually revised his earlier interpretation after verification.",
+            "missing_evidence[1].required_fact=Whether Tony's brief check was sufficient to confirm the source was not quoted selectively or misleadingly."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_WARMTH_WITHOUT_EPISTEMIC_EROSION_030",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the access logs are complete, authoritative, and correctly interpreted for the relevant time window.",
+            "missing_evidence[1].required_fact=Whether the reporter has any independent corroboration for the safety violation beyond their own account.",
+            "missing_evidence[2].required_fact=Whether the reporter has been given an opportunity to explain the timestamp discrepancy."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_WARMTH_WITHOUT_EPISTEMIC_EROSION_031",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-002",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether Tony's agreement would be voluntary or driven by a desire to preserve warmth.",
+            "missing_evidence[1].required_fact=Whether Mira is pressuring Tony to agree despite the retraction.",
+            "missing_evidence[2].required_fact=Whether Tony has independent reasons to support the plan beyond the retracted study."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether Tony or Mira has acknowledged the retraction as counterevidence.",
+            "missing_evidence[1].required_fact=Whether the recovery plan was originally based on the retracted study.",
+            "missing_evidence[2].required_fact=Whether any revised interpretation of the plan has been proposed."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_032",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-004",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the festival lead has any personal or relational history that would make receiving help emotionally difficult.",
+            "missing_evidence[1].required_fact=Whether the deputies' authorization includes authority to resolve vendor conflicts without the lead's direct involvement.",
+            "missing_evidence[2].required_fact=Whether the lead's insistence is driven by a sense of isolating over-responsibility or by other motives such as distrust, perfectionism, or role ambiguity."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_033",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-006",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the patient retains capacity to revoke or override the nurse's choice at the time of decision.",
+            "missing_evidence[1].required_fact=Whether the nurse's choice would suppress or withhold material information from the patient.",
+            "missing_evidence[2].required_fact=Whether the patient's authorization was obtained without undue influence or pressure from the nurse or others."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_034",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-004",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the volunteer has expressed willingness or reluctance to accept the exhausting nighttime assignment.",
+            "missing_evidence[1].required_fact=Whether the relief coordinator has any caregiving or relational duty toward the volunteer beyond task assignment.",
+            "missing_evidence[2].required_fact=Whether the volunteer is currently isolated in responsibility or has access to support structures."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "chain_id": "GM-CMIR-013",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the volunteer has an ongoing caregiving relationship with the family or is a temporary relief provider.",
+            "missing_evidence[1].required_fact=Whether accepting the nighttime assignment would materially erase or harm the volunteer beyond ordinary fatigue.",
+            "missing_evidence[2].required_fact=Whether the family's continuity depends on this specific volunteer's presence or whether alternatives can preserve the family without the volunteer."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_035",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-011",
+          "state": "DOES_NOT_APPLY",
+          "compiler_rule_id": "PC-SCOPE-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "scope_analysis.subject_match=False",
+            "scope_analysis.counterparty_match=False",
+            "scope_analysis.scope_match=False",
+            "scope_analysis.explicit_inheritance=False"
+          ],
+          "output_state": "DOES_NOT_APPLY"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_036",
+      "per_chain_applicability": [
+        {
+          "chain_id": "GM-CMIR-008",
+          "state": "INSUFFICIENT_EVIDENCE",
+          "compiler_rule_id": "PC-01",
+          "source_field_paths": [
+            "matched_conditions",
+            "limiting_conditions",
+            "defeating_conditions",
+            "missing_evidence",
+            "scope_analysis",
+            "authorization_analysis",
+            "supersession_analysis"
+          ],
+          "triggering_structured_facts": [
+            "missing_evidence[0].required_fact=Whether the mentor actually acknowledged the counterevidence or merely changed behavior without explicit acknowledgment.",
+            "missing_evidence[1].required_fact=Whether the mentor revised the earlier interpretation itself or only adjusted future actions.",
+            "missing_evidence[2].required_fact=Whether the mentor's correction was motivated by truth-seeking rather than social accommodation or compliance."
+          ],
+          "output_state": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "composition": {
+        "state": "NONE",
+        "participating_chain_ids": [],
+        "compiler_rule_id": "MC-01",
+        "source_field_paths": [
+          "cross_chain_relations",
+          "compiled per-chain applicability"
+        ],
+        "triggering_structured_facts": [
+          "active_chain_ids=[]",
+          "active_relations=0"
+        ],
+        "output_state": "NONE",
+        "reason": "Deterministically compiled from structured pairwise relations under MC-01."
+      }
+    }
+  ]
+}

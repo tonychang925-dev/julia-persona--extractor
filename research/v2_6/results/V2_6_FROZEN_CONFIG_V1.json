@@ -1,0 +1,38 @@
+{
+  "config_id": "V2_6_FROZEN_CONFIG_V1",
+  "created_at": "2026-09-10T07:40:06.387268+00:00",
+  "cal_output_sha256": "003e6f1b1d7dcba9113596dc4fa179e678c1f1c488cbd58139f84278324053cb",
+  "cal_non_temporal_digest": "4c6cd266f9016672c93e406090da32cb601a98561309f7720c28b856ffccab7a",
+  "provider_identity": {
+    "provider_type": "anthropic",
+    "provider": "deepseek",
+    "model": "deepseek-v4-pro",
+    "adapter": "AnthropicChatAdapter/ReasoningEvidenceAdapter/FreshJudgmentAdapter",
+    "temperature": 0,
+    "thinking_mode": "disabled",
+    "reasoning_max_tokens": 4200,
+    "judgment_max_tokens": 1800,
+    "structured_output_mode": "strict_json_text_without_authoritative_state_fields",
+    "reasoning_prompt_digest": "9cb63b1176f6a64b6b4e31f084f3ddd9d523e50fedaecde543835f11ab2b689f",
+    "judgment_prompt_digest": "ecde854b67d8dc16f2a342562f652c1c370aadb9e4ba37203fda88035a1c65d7",
+    "api_key_exposed": false
+  },
+  "schema_and_compiler_digests": {
+    "__init__.py": "306384552236658c06ef2a5a882424497ee10419fb736fc7a8a9a4fdded919dd",
+    "applicability_compiler.py": "897795c9bc4090fc817e27f02665ce7bbb0b8f6b8febbd167b65f9f847f458d4",
+    "composition_compiler.py": "dc39c379023feb4e30a45b3cc0d78dada2241d76ea135709c5031b10dad5735c",
+    "evaluator.py": "566f87f22c1e15a2980c5a1544b0607c76e526c79b7212f281e5997570d0f6d6",
+    "fresh_judgment_adapter.py": "3fc78fd162870fb24e37b55b8ec5315d4c1a93babd6013adb10b9010bb8ea23e",
+    "reasoning_adapter.py": "a0a5e93300b0bb5371b74825280c5236f7bed2eae4837caded0655ff32a8b31b",
+    "runner.py": "b1f4e660b5139a67ec2ff3610935881ede8dd4b819a6ae9633f005c52415d7d4",
+    "schemas.py": "d453707ffbac523c5c510ce8e99e78edf29e3fb612aed2d1dc3cda1664ece225"
+  },
+  "input_hashes": {
+    "goldset_sha256": "8234045ba1b2f08e182f57279bffafa3e4e910ecd0e21287c3d2dc5c02bc63fc",
+    "cal_benchmark_sha256": "1da9257401e81be4ba5e5a98f7261f4e0c9cc1d0fe8e09bd2749b426a3e5623b",
+    "test_benchmark_sha256": "f7567b59b2ede7083ba9eecd56e9b7418073f2812c848619d1de238e919e18f4",
+    "projected_states_sha256": "eac2d682201cd9e82df675841e67a9060680c3558aeddfdb04e2016f203c3bf6",
+    "v2_4_cal_result_sha256": "7eb5003df02da4a77e58c19152b76214c2e4fc44ddeeb577c88d946f76328326"
+  },
+  "freeze_policy": "NO_TEST_DRIVEN_REASONING_PROMPT_COMPILER_SCHEMA_EVALUATOR_BENCHMARK_OR_THRESHOLD_CHANGE"
+}

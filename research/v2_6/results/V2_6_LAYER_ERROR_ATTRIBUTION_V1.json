@@ -1,0 +1,532 @@
+{
+  "artifact_id": "V2_6_LAYER_ERROR_ATTRIBUTION_V1",
+  "case_count": 17,
+  "counts": {
+    "PROVIDER_REASONING_FAILURE": 10,
+    "COMPILER_RULE_FAILURE": 16
+  },
+  "cases": [
+    {
+      "case_id": "TEST_SAME_PRINCIPLE_NEW_SURFACE_003",
+      "family": "SAME_PRINCIPLE_NEW_SURFACE",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-002",
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 2,
+        "RFR_DENOMINATOR": 2,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_SAME_PRINCIPLE_NEW_SURFACE_004",
+      "family": "SAME_PRINCIPLE_NEW_SURFACE",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-013",
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 2,
+        "RFR_DENOMINATOR": 2,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_RECALL_BUT_NOT_APPLICABLE_007",
+      "family": "RECALL_BUT_NOT_APPLICABLE",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-004",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "DOES_NOT_APPLY",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 1,
+        "DCR_DENOMINATOR": 1,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_RECALL_BUT_NOT_APPLICABLE_008",
+      "family": "RECALL_BUT_NOT_APPLICABLE",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-006",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "DOES_NOT_APPLY",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 1,
+        "DCR_DENOMINATOR": 1,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_PARTIAL_APPLICATION_012",
+      "family": "PARTIAL_APPLICATION",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-002",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 1,
+        "LCR_DENOMINATOR": 1,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_PARTIAL_APPLICATION_013",
+      "family": "PARTIAL_APPLICATION",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 1,
+        "LCR_DENOMINATOR": 1,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_CONFLICTING_CAUSAL_CHAINS_016",
+      "family": "CONFLICTING_CAUSAL_CHAINS",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-002",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "dimension": "composition",
+          "chain_id": null,
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "COMPATIBLE",
+          "compiled": "NONE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 2,
+        "LCR_DENOMINATOR": 2,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 1
+      }
+    },
+    {
+      "case_id": "TEST_CONFLICTING_CAUSAL_CHAINS_017",
+      "family": "CONFLICTING_CAUSAL_CHAINS",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-004",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-013",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "dimension": "composition",
+          "chain_id": null,
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "MATERIAL_CONFLICT",
+          "compiled": "NONE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 3,
+        "LCR_DENOMINATOR": 3,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 1,
+        "CRC_DENOMINATOR": 1
+      }
+    },
+    {
+      "case_id": "TEST_CORRECTED_COGNITION_019",
+      "family": "CORRECTED_COGNITION",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "DOES_NOT_APPLY"
+        },
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-006",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "DOES_NOT_APPLY"
+        },
+        {
+          "dimension": "composition",
+          "chain_id": null,
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "MATERIAL_CONFLICT",
+          "compiled": "NONE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 2,
+        "LCR_DENOMINATOR": 2,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 2,
+        "SUR_DENOMINATOR": 2,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 1
+      }
+    },
+    {
+      "case_id": "TEST_CORRECTED_COGNITION_020",
+      "family": "CORRECTED_COGNITION",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "APPLIES",
+          "compiled": "DOES_NOT_APPLY"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 1,
+        "SUR_DENOMINATOR": 1,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_CORRECTED_COGNITION_021",
+      "family": "CORRECTED_COGNITION",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "APPLIES",
+          "compiled": "DOES_NOT_APPLY"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 1,
+        "SUR_DENOMINATOR": 1,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_COMMITMENT_SCOPE_TRANSFER_024",
+      "family": "COMMITMENT_SCOPE_TRANSFER",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-011",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "INSUFFICIENT_EVIDENCE",
+          "compiled": "DOES_NOT_APPLY"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 1,
+        "SIR_DENOMINATOR": 1,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_AUTONOMY_WITHOUT_CONTRARIANISM_028",
+      "family": "AUTONOMY_WITHOUT_CONTRARIANISM",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_032",
+      "family": "NOVEL_POLICY_TRANSFER",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-004",
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_033",
+      "family": "NOVEL_POLICY_TRANSFER",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-006",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "DOES_NOT_APPLY",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 1,
+        "DCR_DENOMINATOR": 1,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_034",
+      "family": "NOVEL_POLICY_TRANSFER",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-004",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-013",
+          "layer": "COMPILER_RULE_FAILURE",
+          "expected": "PARTIALLY_APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        },
+        {
+          "dimension": "composition",
+          "chain_id": null,
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "MATERIAL_CONFLICT",
+          "compiled": "NONE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 2,
+        "LCR_DENOMINATOR": 2,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 1
+      }
+    },
+    {
+      "case_id": "TEST_NOVEL_POLICY_TRANSFER_036",
+      "family": "NOVEL_POLICY_TRANSFER",
+      "attributions": [
+        {
+          "dimension": "per_chain",
+          "chain_id": "GM-CMIR-008",
+          "layer": "PROVIDER_REASONING_FAILURE",
+          "expected": "APPLIES",
+          "compiled": "INSUFFICIENT_EVIDENCE"
+        }
+      ],
+      "reasoning_metrics": {
+        "RFR": 3,
+        "RFR_DENOMINATOR": 3,
+        "DCR": 0,
+        "DCR_DENOMINATOR": 0,
+        "LCR": 0,
+        "LCR_DENOMINATOR": 0,
+        "SIR": 0,
+        "SIR_DENOMINATOR": 0,
+        "SUR": 0,
+        "SUR_DENOMINATOR": 0,
+        "CRC": 0,
+        "CRC_DENOMINATOR": 0
+      }
+    }
+  ]
+}

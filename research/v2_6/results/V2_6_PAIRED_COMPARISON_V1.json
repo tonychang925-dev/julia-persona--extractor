@@ -1,0 +1,68 @@
+{
+  "artifact_id": "V2_6_PAIRED_COMPARISON_V1",
+  "comparison": {
+    "ACR": {
+      "V2_5_RESCORE": 0.666667,
+      "V2_5_S1": 0.375,
+      "V2_6": 0.291667
+    },
+    "COMPOSITION_ACCURACY": {
+      "V2_5_RESCORE": 1.0,
+      "V2_5_S1": 0.791667,
+      "V2_6": 0.833333
+    },
+    "CONFLICT_FAMILY_ACCURACY": {
+      "V2_5_RESCORE": 1.0,
+      "V2_5_S1": 0.333333,
+      "V2_6": 0.0
+    },
+    "HPO": {
+      "V2_5_RESCORE": 0.0,
+      "V2_5_S1": 0.125,
+      "V2_6": 0.083333
+    },
+    "DAC": {
+      "V2_5_RESCORE": 1.0,
+      "V2_5_S1": 0.916667,
+      "V2_6": 1.0
+    },
+    "SCR": {
+      "V2_5_RESCORE": 0.958333,
+      "V2_5_S1": 1.0,
+      "V2_6": 1.0
+    },
+    "CSI": {
+      "V2_5_RESCORE": 0.958333,
+      "V2_5_S1": 1.0,
+      "V2_6": 1.0
+    },
+    "UER": {
+      "V2_5_RESCORE": 0.916667,
+      "V2_5_S1": 0.875,
+      "V2_6": 0.958333
+    },
+    "RFR": {
+      "V2_6": 1.0
+    },
+    "DCR": {
+      "V2_6": 1.0
+    },
+    "LCR": {
+      "V2_6": 1.0
+    },
+    "SIR": {
+      "V2_6": 1.0
+    },
+    "SUR": {
+      "V2_6": 1.0
+    },
+    "CRC": {
+      "V2_6": 0.25
+    }
+  },
+  "native_vs_projected_counts": {
+    "DIFFERENT_BUT_BOTH_DEFENSIBLE": 8,
+    "EQUIVALENT": 7,
+    "NATIVE_REGRESSES": 9
+  }
+}

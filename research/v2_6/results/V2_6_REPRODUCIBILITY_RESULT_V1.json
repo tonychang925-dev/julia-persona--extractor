@@ -1,0 +1,21 @@
+{
+  "artifact_id": "V2_6_REPRODUCIBILITY_RESULT_V1",
+  "checks": {
+    "test_non_temporal_digest_reproduced": true,
+    "compiler_deterministic": true,
+    "compiled_artifact_matches_frames": true,
+    "provider_identity_frozen": true,
+    "schema_and_compiler_digests_frozen": true,
+    "all_reasoning_captures_present": true,
+    "all_judgment_captures_present": true,
+    "all_activations_provenanced": true
+  },
+  "passed": true,
+  "test_non_temporal_digest": "18c8c26ba38e7a88409a7623593009a77f085dc5665267dc0fef3c563f77714b",
+  "reasoning_frame_digest": "bb9b3ea2ef64d03f00bef91c46b189aef7b9dea79f1ea7b5480430e3f5e0cd75",
+  "compiled_state_digest": "136f172504d2a45f296ed167d190be167fcf62463543a8069c2825c5f123f12e",
+  "fresh_judgment_digest": "ccf67a2d412157890420496f3ca8dcc770edbac1f4d4efeacf09d2ff80c27e2f",
+  "test_file_sha256": "df6a6b3b7b4d464691b857e43547a5583c7b11e1c7cbe9e4a59bcb6478f0e1c7",
+  "provider_repetition_performed": false,
+  "provider_stability_metrics_available": false
+}
